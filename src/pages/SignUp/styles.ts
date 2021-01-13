@@ -5,7 +5,7 @@ import {
   BACKGROUND_COLOR,
   HIGHLIGHT_COLOR,
   NORMAL_TEXT_COLOR,
-  SMOTH_HIGHLIGHT_COLOR,
+  SMOOTH_HIGHLIGHT_COLOR,
 } from '../../constants';
 
 export const Container = styled.View`
@@ -33,7 +33,7 @@ export const BackToSignInButton = styled.TouchableOpacity`
   justify-content: center;
   padding: 16px 0 ${16 + getBottomSpace()}px;
   background: ${BACKGROUND_COLOR};
-  border-color: ${SMOTH_HIGHLIGHT_COLOR};
+  border-color: ${SMOOTH_HIGHLIGHT_COLOR};
   border-top-width: 1px;
 `;
 

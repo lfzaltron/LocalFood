@@ -6,6 +6,6 @@ export const NORMAL_TEXT_COLOR = '#8d8e8a'; // '#f4ede8';
 
 export const DARK_TEXT_COLOR = '#666360';
 
-export const SMOTH_HIGHLIGHT_COLOR = '#e98074';
+export const SMOOTH_HIGHLIGHT_COLOR = '#e98074'; // '#666360' ??
 
 export const HIGHLIGHT_COLOR = '#e85a4f'; // '#ff9000';
