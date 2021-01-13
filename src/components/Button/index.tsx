@@ -9,7 +9,6 @@ interface ButtonProps extends RectButtonProperties {
 }
 
 const Button: React.FC<ButtonProps> = ({ children, ...rest }) => (
-  // eslint-disable-next-line react/jsx-props-no-spreading
   <Container {...rest}>
     <ButtonText>{children}</ButtonText>
   </Container>

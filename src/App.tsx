@@ -9,7 +9,7 @@ import { BACKGROUND_COLOR } from './constants';
 
 const App: React.FC = () => (
   <NavigationContainer>
-    <StatusBar barStyle="light-content" backgroundColor={BACKGROUND_COLOR} />
+    <StatusBar barStyle="dark-content" backgroundColor={BACKGROUND_COLOR} />
     <View style={{ flex: 1, backgroundColor: BACKGROUND_COLOR }}>
       <Routes />
     </View>
