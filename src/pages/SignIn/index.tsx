@@ -5,11 +5,14 @@ import {
   ScrollView,
   View,
   TextInput,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+
+import { useAuth } from '../../hooks/auth';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -24,13 +27,26 @@ import {
 } from './styles';
 import { HIGHLIGHT_COLOR } from '../../constants';
 
+interface SignInCredentials {
+  email: string;
+  password: string;
+}
+
 const SignIn: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
+  const { signIn } = useAuth();
 
-  const handleSignIn = useCallback((data: object) => {
-    console.log(data);
+  const handleSignIn = useCallback((data: SignInCredentials) => {
+    signIn({
+      email: data.email,
+      password: data.password,
+    })
+      .then(() => {
+        Alert.alert('Ok', 'Login realizado com sucesso!');
+      })
+      .catch((error: Error) => Alert.alert('Erro', error.message));
   }, []);
 
   return (

@@ -1,5 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useCallback } from 'react';
 import {
+  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -10,6 +11,8 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+
+import { useAuth } from '../../hooks/auth';
 
 import Input from '../../components/Input';
 import Button from '../../components/Button';
@@ -22,11 +25,26 @@ import {
 } from './styles';
 import { HIGHLIGHT_COLOR } from '../../constants';
 
+interface SignUpFormData {
+  name: string; // TODO: Unused
+  email: string;
+  password: string;
+}
+
 const SignUp: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
   const navigation = useNavigation();
+  const { signUp } = useAuth();
+
+  const handleSignUp = useCallback((data: SignUpFormData) => {
+    signUp({ email: data.email, password: data.password })
+      .then(() => {
+        Alert.alert('Ok', 'Cadastro realizado com sucesso!');
+      })
+      .catch((error: Error) => Alert.alert('Erro', error.message));
+  }, []);
 
   return (
     <>
@@ -44,12 +62,7 @@ const SignUp: React.FC = () => {
               <Title>Crie sua conta</Title>
             </View>
 
-            <Form
-              ref={formRef}
-              onSubmit={data => {
-                console.log(data);
-              }}
-            >
+            <Form ref={formRef} onSubmit={handleSignUp}>
               <Input
                 name="name"
                 icon="user"
