@@ -43,15 +43,22 @@ const AuthProvider: React.FC = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadStoragedData(): Promise<void> {
-      // Verificar se ta logado
-      //        api.defaults.headers.authorization = `Bearer ${token[1]}`;
-      //        setData({ token: token[1], user: JSON.parse(user[1]) });
+    auth().onAuthStateChanged(user => {
+      if (user) {
+        setData({
+          user: {
+            id: user.uid,
+            name: user.displayName ? user.displayName : '',
+            email: user.email ? user.email : '',
+          },
+          token: '',
+        });
+      } else {
+        setData({} as AuthData);
+      }
 
       setLoading(false);
-    }
-
-    loadStoragedData();
+    });
   }, []);
 
   const signUp = useCallback(async ({ email, password }) => {
@@ -68,11 +75,13 @@ const AuthProvider: React.FC = ({ children }) => {
         else throw new Error(error.code);
       });
   }, []);
+
   const signIn = useCallback(async ({ email, password }) => {
+    setLoading(true);
     await auth()
       .signInWithEmailAndPassword(email, password)
-      .then(() => console.log('User signed in!'))
       .catch(error => {
+        setLoading(false);
         if (
           error.code === 'auth/user-not-found' ||
           error.code === 'auth/wrong-password'
@@ -81,10 +90,13 @@ const AuthProvider: React.FC = ({ children }) => {
         else throw new Error(error.code);
       });
   }, []);
+
   const signOut = useCallback(() => {
+    setLoading(true);
     auth()
       .signOut()
-      .then(() => console.log('User signed out!'));
+      .then(() => console.log('User signed out!'))
+      .catch(() => setLoading(false));
   }, []);
 
   return (
