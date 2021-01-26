@@ -20,13 +20,6 @@ export const Container = styled.View`
   flex: 1;
 `;
 
-export const HeaderTitle = styled.Text`
-  color: #f4ede8;
-  font-family: 'RobotoSlab-Regular';
-  font-size: 20px;
-  line-height: 28px;
-`;
-
 export const TopBar = styled.View`
   padding: 12px 24px;
   padding-top: ${getStatusBarHeight() + 24}px;
@@ -56,7 +49,7 @@ export const FindField = styled.TextInput`
   padding-left: 8px;
 `;
 
-export const FiltersButton = styled.TouchableOpacity``;
+export const FilterButton = styled.TouchableOpacity``;
 
 export const AdList = styled(FlatList as new () => FlatList<Ad>)`
   padding: 12px 12px 16px;

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 import { useAuth } from '../../hooks/auth';
 
@@ -8,7 +9,7 @@ import {
   TopBar,
   FindContainer,
   FindField,
-  FiltersButton,
+  FilterButton,
   SignOutButton,
   SignOutButtonText,
   AdList,
@@ -33,6 +34,7 @@ const List: React.FC = () => {
   const [ads, setAds] = useState<Ad[]>([]);
   const { signOut } = useAuth();
   const [search, setSearch] = useState('');
+  const { navigate } = useNavigation();
 
   // Stub...Substituir por dados do backend
   useEffect(() => {
@@ -55,6 +57,13 @@ const List: React.FC = () => {
     console.log(search);
   }, [search]);
 
+  const navigatToDetail = useCallback(
+    ad => {
+      navigate('AdDetail', ad);
+    },
+    [navigate],
+  );
+
   return (
     <Container>
       <TopBar>
@@ -65,15 +74,15 @@ const List: React.FC = () => {
             onEndEditing={e => setSearch(e.nativeEvent.text)}
           />
         </FindContainer>
-        <FiltersButton onPress={() => console.log('Filters')}>
+        <FilterButton onPress={() => console.log('Filters')}>
           <Icon name="filter" size={28} color={DARK_TEXT_COLOR} />
-        </FiltersButton>
+        </FilterButton>
       </TopBar>
       <AdList
         data={ads}
         keyExtractor={ad => ad.id}
         renderItem={({ item: ad }) => (
-          <AdContainer onPress={() => console.log(`Press ad ${ad.title}`)}>
+          <AdContainer onPress={() => navigatToDetail(ad)}>
             <AdImage source={{ uri: ad.imageUrl }} />
             <AdInfo>
               <AdTitle>{ad.title}</AdTitle>

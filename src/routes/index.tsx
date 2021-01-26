@@ -3,9 +3,12 @@ import { View, ActivityIndicator } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { useAuth } from '../hooks/auth';
+
 import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import List from '../pages/List';
+import AdDetail from '../pages/AdDetail';
+
 import { BACKGROUND_COLOR, HIGHLIGHT_COLOR } from '../constants';
 
 const Auth = createStackNavigator();
@@ -39,6 +42,7 @@ const AuthRoutes: React.FC = () => {
       {!!user && (
         <>
           <Auth.Screen name="List" component={List} />
+          <Auth.Screen name="AdDetail" component={AdDetail} />
         </>
       )}
     </Auth.Navigator>
