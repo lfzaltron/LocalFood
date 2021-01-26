@@ -25,6 +25,7 @@ import { DARK_TEXT_COLOR } from '../../constants';
 export interface Ad {
   id: string;
   title: string;
+  description: string;
   tags: string[];
   price: number;
   imageUrl: string;
@@ -48,6 +49,15 @@ const List: React.FC = () => {
         price: 15.9 + i,
         imageUrl:
           'https://image.shutterstock.com/image-vector/food-icon-design-template-260nw-1042503748.jpg',
+        description:
+          'Lorem Ipsum is simply dummy text of the printing and typesetting \
+industry. Lorem Ipsum has been the industrys standard dummy text \
+ever since the 1500s, when an unknown printer took a galley of type \
+and scrambled it to make a type specimen book. It has survived not \
+only five centuries, but also the leap into electronic typesetting, \
+remaining essentially unchanged. It was popularised in the 1960s \
+with the release of Letraset sheets containing Lorem Ipsum passages, \
+and more recently with',
       });
     }
     setAds(stubAds);
