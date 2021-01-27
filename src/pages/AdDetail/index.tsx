@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { StackNavigationOptions } from '@react-navigation/stack';
 
 import Icon from 'react-native-vector-icons/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -8,9 +9,8 @@ import { Ad } from '../List';
 
 import {
   Container,
-  TopBar,
-  BackButton,
-  Title,
+  HeaderContainer,
+  HeaderTitle,
   AdImage,
   Price,
   DataContainer,
@@ -20,20 +20,33 @@ import {
   TagText,
 } from './styles';
 
-const AdDetail: React.FC = () => {
+interface AdDetailProps {
+  navigation: {
+    setOptions(options: StackNavigationOptions): void;
+  };
+}
+
+const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
   const { goBack } = useNavigation();
   const route = useRoute();
   const ad = route.params as Ad;
 
+  useEffect(
+    () =>
+      navigation.setOptions({
+        headerTitle: () => (
+          <HeaderContainer>
+            <HeaderTitle>{ad.title}</HeaderTitle>
+          </HeaderContainer>
+        ),
+        headerBackTitleVisible: false,
+      }),
+    [navigation, ad],
+  );
+
   return (
     <Container>
       <ScrollView>
-        <TopBar>
-          <BackButton onPress={goBack}>
-            <Icon name="arrow-left" size={20} color={DARK_TEXT_COLOR} />
-          </BackButton>
-          <Title>{ad.title}</Title>
-        </TopBar>
         <AdImage source={{ uri: ad.imageUrl }} />
         <DataContainer>
           <Price>

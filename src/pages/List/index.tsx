@@ -84,7 +84,7 @@ and more recently with',
             onEndEditing={e => setSearch(e.nativeEvent.text)}
           />
         </FindContainer>
-        <FilterButton onPress={() => console.log('Filters')}>
+        <FilterButton onPress={() => navigate('Filters')}>
           <Icon name="filter" size={28} color={DARK_TEXT_COLOR} />
         </FilterButton>
       </TopBar>

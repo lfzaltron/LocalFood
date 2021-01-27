@@ -12,22 +12,20 @@ export const Container = styled.View`
   flex: 1;
 `;
 
-export const TopBar = styled.View`
-  padding: 12px 24px;
-  padding-top: ${getStatusBarHeight() + 24}px;
+// TODO: Criar um componente para esse Header
+export const HeaderContainer = styled.View`
+  flex: 1;
   background: ${LIGHT_HIGHLIGHT_COLOR};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  padding-right: 24px;
 `;
 
-export const BackButton = styled.TouchableOpacity``;
-
-export const Title = styled.Text`
+export const HeaderTitle = styled.Text`
   font-family: 'RobotoSlab-Medium';
   font-size: 18px;
   color: ${DARK_TEXT_COLOR};
-  flex: 1;
   margin-left: 24px;
 `;
 

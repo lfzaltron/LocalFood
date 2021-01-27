@@ -8,12 +8,19 @@ import SignIn from '../pages/SignIn';
 import SignUp from '../pages/SignUp';
 import List from '../pages/List';
 import AdDetail from '../pages/AdDetail';
+import Filters from '../pages/Filters';
 
-import { BACKGROUND_COLOR, HIGHLIGHT_COLOR } from '../constants';
+import {
+  BACKGROUND_COLOR,
+  DARK_TEXT_COLOR,
+  HIGHLIGHT_COLOR,
+  LIGHT_HIGHLIGHT_COLOR,
+} from '../constants';
 
-const Auth = createStackNavigator();
+const Main = createStackNavigator();
+const Root = createStackNavigator();
 
-const AuthRoutes: React.FC = () => {
+const MainRoutes: React.FC = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -24,29 +31,59 @@ const AuthRoutes: React.FC = () => {
     );
   }
   return (
-    <Auth.Navigator
+    <Main.Navigator
       screenOptions={{
         headerShown: false,
-        // headerTintColor: '#312e38',
-        // headerStyle: { backgroundColor: '#f4ede8' },
+        headerTintColor: DARK_TEXT_COLOR,
+        headerStyle: { backgroundColor: LIGHT_HIGHLIGHT_COLOR },
         cardStyle: { backgroundColor: BACKGROUND_COLOR },
       }}
     >
       {!user && (
         <>
-          <Auth.Screen name="SignIn" component={SignIn} />
-          <Auth.Screen name="SignUp" component={SignUp} />
+          <Main.Screen name="SignIn" component={SignIn} />
+          <Main.Screen name="SignUp" component={SignUp} />
         </>
       )}
 
       {!!user && (
         <>
-          <Auth.Screen name="List" component={List} />
-          <Auth.Screen name="AdDetail" component={AdDetail} />
+          <Main.Screen name="List" component={List} />
+          <Main.Screen
+            name="AdDetail"
+            component={AdDetail}
+            options={{ headerShown: true, title: '' }}
+          />
         </>
       )}
-    </Auth.Navigator>
+    </Main.Navigator>
   );
 };
 
-export default AuthRoutes;
+const RootRoutes: React.FC = () => {
+  return (
+    <Root.Navigator
+      mode="modal"
+      screenOptions={{
+        headerShown: true,
+        headerTintColor: DARK_TEXT_COLOR,
+        headerStyle: { backgroundColor: LIGHT_HIGHLIGHT_COLOR },
+        cardStyle: { backgroundColor: BACKGROUND_COLOR },
+        headerBackTitleVisible: false,
+      }}
+    >
+      <Root.Screen
+        name="Main"
+        component={MainRoutes}
+        options={{ headerShown: false }}
+      />
+      <Root.Screen
+        name="Filters"
+        component={Filters}
+        options={{ title: 'Filtros' }}
+      />
+    </Root.Navigator>
+  );
+};
+
+export default RootRoutes;
