@@ -1,4 +1,3 @@
-import { getBottomSpace } from 'react-native-iphone-x-helper';
 import styled from 'styled-components/native';
 import { Platform } from 'react-native';
 import {
@@ -31,7 +30,7 @@ export const BackToSignInButton = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  padding: 16px 0 ${16 + getBottomSpace()}px;
+  padding: 16px 0 16px;
   background: ${BACKGROUND_COLOR};
   border-color: ${SMOOTH_HIGHLIGHT_COLOR};
   border-top-width: 1px;
@@ -40,6 +39,6 @@ export const BackToSignInButton = styled.TouchableOpacity`
 export const BackToSignInButtonText = styled.Text`
   font-family: 'RobotoSlab-Regular';
   color: ${HIGHLIGHT_COLOR};
-  font-size: 16px;
+  font-size: 18px;
   margin-left: 16px;
 `;

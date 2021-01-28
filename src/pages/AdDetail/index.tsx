@@ -18,6 +18,8 @@ import {
   TagList,
   Tag,
   TagText,
+  BuyButton,
+  BuyButtonText,
 } from './styles';
 
 interface AdDetailProps {
@@ -69,6 +71,9 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
           />
         </DataContainer>
       </ScrollView>
+      <BuyButton onPress={() => console.log('Comprouuu!!')}>
+        <BuyButtonText>Comprar</BuyButtonText>
+      </BuyButton>
     </Container>
   );
 };

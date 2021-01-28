@@ -3,13 +3,17 @@ import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 
 import {
+  BACKGROUND_COLOR,
   DARK_TEXT_COLOR,
+  HIGHLIGHT_COLOR,
   LIGHT_HIGHLIGHT_COLOR,
   NORMAL_TEXT_COLOR,
+  SMOOTH_HIGHLIGHT_COLOR,
 } from '../../constants';
 
 export const Container = styled.View`
   flex: 1;
+  padding-bottom: 40px;
 `;
 
 // TODO: Criar um componente para esse Header
@@ -65,4 +69,27 @@ export const TagText = styled.Text`
   font-size: 18px;
   color: ${DARK_TEXT_COLOR};
   margin-left: 8px;
+`;
+
+// TODO: Vou usar esses estilos como botão de comprar.
+export const BuyButton = styled.TouchableOpacity`
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0 16px;
+  background: ${BACKGROUND_COLOR};
+  border-color: ${SMOOTH_HIGHLIGHT_COLOR};
+  border-top-width: 1px;
+`;
+
+export const BuyButtonText = styled.Text`
+  font-family: 'RobotoSlab-Medium';
+  color: ${HIGHLIGHT_COLOR};
+  font-size: 18px;
+  margin-left: 16px;
 `;

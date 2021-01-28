@@ -10,8 +10,6 @@ import {
   FindContainer,
   FindField,
   FilterButton,
-  SignOutButton,
-  SignOutButtonText,
   AdList,
   AdContainer,
   AdImage,
@@ -110,9 +108,6 @@ and more recently with',
           </AdContainer>
         )}
       />
-      <SignOutButton onPress={signOut}>
-        <SignOutButtonText>Stub SignOut</SignOutButtonText>
-      </SignOutButton>
     </Container>
   );
 };

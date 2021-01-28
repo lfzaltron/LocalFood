@@ -94,25 +94,3 @@ export const AdMetaText = styled.Text`
   color: ${NORMAL_TEXT_COLOR};
   font-family: 'RobotoSlab-Regular';
 `;
-
-export const SignOutButton = styled.TouchableOpacity`
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  right: 0;
-
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 0 ${16 + getBottomSpace()}px;
-  background: ${BACKGROUND_COLOR};
-  border-color: ${SMOOTH_HIGHLIGHT_COLOR};
-  border-top-width: 1px;
-`;
-
-export const SignOutButtonText = styled.Text`
-  font-family: 'RobotoSlab-Regular';
-  color: ${HIGHLIGHT_COLOR};
-  font-size: 16px;
-  margin-left: 16px;
-`;
