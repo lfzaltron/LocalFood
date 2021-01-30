@@ -5,8 +5,9 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from '../hooks/auth';
 
 import Auth from './auth.routes';
-import Profile from './profile.routes';
 import Main from './main.routes';
+import Profile from './profile.routes';
+import NewAd from './newAd.routes';
 
 import {
   BACKGROUND_COLOR,
@@ -28,10 +29,10 @@ const TabRoutes: React.FC = () => {
 
           if (route.name === 'List') {
             iconName = 'list';
-          } else if (route.name === 'Auth') {
-            iconName = 'log-in';
           } else if (route.name === 'Profile') {
-            iconName = 'user';
+            iconName = !user ? 'log-in' : 'user';
+          } else if (route.name === 'NewAd') {
+            iconName = 'plus';
           }
 
           return <Icon name={iconName} size={size} color={color} />;
@@ -43,11 +44,22 @@ const TabRoutes: React.FC = () => {
         activeBackgroundColor: LIGHT_HIGHLIGHT_COLOR,
         inactiveBackgroundColor: BACKGROUND_COLOR,
         style: { backgroundColor: BACKGROUND_COLOR },
+        showLabel: false,
       }}
     >
       <Tab.Screen name="List" component={Main} />
-      {!user && <Tab.Screen name="Auth" component={Auth} />}
-      {!!user && <Tab.Screen name="Profile" component={Profile} />}
+      {!user && (
+        <>
+          <Tab.Screen name="NewAd" component={Auth} />
+          <Tab.Screen name="Profile" component={Auth} />
+        </>
+      )}
+      {!!user && (
+        <>
+          <Tab.Screen name="NewAd" component={NewAd} />
+          <Tab.Screen name="Profile" component={Profile} />
+        </>
+      )}
     </Tab.Navigator>
   );
 };
