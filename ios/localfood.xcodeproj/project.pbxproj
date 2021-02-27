@@ -22,6 +22,7 @@
 		A0995BB6C7F904811C2AD71B /* libPods-localfood-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6D40D336A566EC55C36B600F /* libPods-localfood-tvOSTests.a */; };
 		E383017D28235FAF97217C19 /* libPods-localfood-localfoodTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C081D8164D01C2141EA62A0F /* libPods-localfood-localfoodTests.a */; };
 		E5BE4A21514049E78393FEB3 /* RobotoSlab-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 163D120941C9455AA3DD0EDD /* RobotoSlab-Medium.ttf */; };
+		F241976825EA83240026EFD0 /* anything.swift in Sources */ = {isa = PBXBuildFile; fileRef = F241976725EA83240026EFD0 /* anything.swift */; };
 		F2C5963A25B5DB1E0015F78F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F2C5963925B5DB1E0015F78F /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +72,8 @@
 		C081D8164D01C2141EA62A0F /* libPods-localfood-localfoodTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-localfood-localfoodTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F241976625EA83230026EFD0 /* localfood-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "localfood-Bridging-Header.h"; sourceTree = "<group>"; };
+		F241976725EA83240026EFD0 /* anything.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = anything.swift; sourceTree = "<group>"; };
 		F2C5963925B5DB1E0015F78F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F4CC103F5E4A3599B5B859DB /* Pods-localfood-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-localfood-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-localfood-tvOSTests/Pods-localfood-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -134,10 +137,12 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				F241976725EA83240026EFD0 /* anything.swift */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				F241976625EA83230026EFD0 /* localfood-Bridging-Header.h */,
 			);
 			name = localfood;
 			sourceTree = "<group>";
@@ -311,7 +316,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						LastSwiftMigration = 1120;
+						LastSwiftMigration = 1150;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -663,6 +668,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				F241976825EA83240026EFD0 /* anything.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -704,6 +710,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDA8B54872241598E1BD9ED /* Pods-localfood-localfoodTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -727,6 +734,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A9D2A1C68FFB01ACE3BB1A9B /* Pods-localfood-localfoodTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = localfoodTests/Info.plist;
@@ -760,6 +768,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.zaltron.localfood;
 				PRODUCT_NAME = localfood;
+				SWIFT_OBJC_BRIDGING_HEADER = "localfood-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -782,6 +791,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = br.com.zaltron.localfood;
 				PRODUCT_NAME = localfood;
+				SWIFT_OBJC_BRIDGING_HEADER = "localfood-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

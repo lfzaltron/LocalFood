@@ -52,7 +52,7 @@ export const FindField = styled.TextInput`
 export const FilterButton = styled.TouchableOpacity``;
 
 export const AdList = styled(FlatList as new () => FlatList<Ad>)`
-  padding: 12px 12px 16px;
+  padding: 12px;
 `;
 
 export const AdContainer = styled(RectButton)`

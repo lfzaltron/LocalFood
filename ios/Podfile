@@ -8,6 +8,8 @@ target 'localfood' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+  pod ‘react-native-geolocation-service’, path: ‘../node_modules/react-native-geolocation-service’
+
   target 'localfoodTests' do
     inherit! :complete
     # Pods for testing
