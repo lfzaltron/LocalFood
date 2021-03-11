@@ -3,6 +3,7 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 
 import { useAuth } from '../../hooks/auth';
+import Ad from '../../types/Ad';
 
 import {
   Container,
@@ -19,15 +20,6 @@ import {
   AdMetaText,
 } from './styles';
 import { DARK_TEXT_COLOR } from '../../constants';
-
-export interface Ad {
-  id: string;
-  title: string;
-  description: string;
-  tags: string[];
-  price: number;
-  imageUrl: string;
-}
 
 const List: React.FC = () => {
   const [ads, setAds] = useState<Ad[]>([]);

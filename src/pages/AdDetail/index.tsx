@@ -5,7 +5,7 @@ import { StackNavigationOptions } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
 import { DARK_TEXT_COLOR } from '../../constants';
-import { Ad } from '../List';
+import Ad from '../../types/Ad';
 
 import {
   Container,

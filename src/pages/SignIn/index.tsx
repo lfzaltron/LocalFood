@@ -38,16 +38,19 @@ const SignIn: React.FC = () => {
   const navigation = useNavigation();
   const { signIn } = useAuth();
 
-  const handleSignIn = useCallback((data: SignInCredentials) => {
-    signIn({
-      email: data.email,
-      password: data.password,
-    })
-      .then(() => {
-        Alert.alert('Ok', 'Login realizado com sucesso!');
+  const handleSignIn = useCallback(
+    (data: SignInCredentials) => {
+      signIn({
+        email: data.email,
+        password: data.password,
       })
-      .catch((error: Error) => Alert.alert('Erro', error.message));
-  }, []);
+        .then(() => {
+          Alert.alert('Ok', 'Login realizado com sucesso!');
+        })
+        .catch((error: Error) => Alert.alert('Erro', error.message));
+    },
+    [signIn],
+  );
 
   return (
     <>
