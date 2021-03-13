@@ -13,6 +13,7 @@ import {
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
 
 import { useAuth } from '../../hooks/auth';
 import Input from '../../components/Input';
@@ -48,6 +49,17 @@ const NewAd: React.FC = () => {
       Alert.alert('Erro ao atualizar avatar.');
       return;
     }
+
+    (async () => {
+      console.log(response.fileName);
+      console.log(response.uri);
+
+      const reference = storage().ref(response.fileName);
+      const { metadata } = await reference.putFile(
+        response.uri ? response.uri : '',
+      );
+      console.log(metadata.fullPath);
+    })();
     setImageUrl(response.uri || '');
   }, []);
 

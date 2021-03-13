@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
 
 import { useAuth } from '../../hooks/auth';
 import Ad from '../../types/Ad';
@@ -33,18 +34,36 @@ const List: React.FC = () => {
     (async () => {
       const adsCollection = await firestore()
         .collection('Ads')
-        .where('title', 'in', ['Pizza congelada'])
+        //        .where('title', 'in', ['Pizza congelada'])
         .get();
-      adsCollection.docs.forEach(doc => {
-        console.log(doc.data());
-      });
-      // console.log(adsCollection.docs);
-      // console.log({ adsCollection });
+
+      const stubAds: Ad[] = [];
+      // adsCollection.docs.forEach(async doc => {
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < adsCollection.docs.length; i++) {
+        const doc = adsCollection.docs[i];
+        //        console.log(doc.data());
+        const ref = storage().ref(doc.data().image);
+        // eslint-disable-next-line no-await-in-loop
+        const url = await ref.getDownloadURL();
+        //        console.log(url);
+
+        stubAds.push({
+          id: doc.id,
+          title: doc.data().title,
+          tags: ['LowCarb', 'Fit', 'GlutenFree'],
+          price: 15.9,
+          imageUrl: url,
+          description: 'Lorem Ipsum',
+        });
+      }
+      setAds(stubAds);
     })();
 
+    /*
     const stubAds = [];
     // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 0; i++) {
       stubAds.push({
         id: `${i}`,
         title: `Anuncio ${i}`,
@@ -64,6 +83,7 @@ and more recently with',
       });
     }
     setAds(stubAds);
+    */
   }, []);
 
   useEffect(() => {
