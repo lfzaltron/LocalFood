@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
 
 import { useAuth } from '../../hooks/auth';
 import Ad from '../../types/Ad';
@@ -29,61 +28,27 @@ const List: React.FC = () => {
   const [search, setSearch] = useState('');
   const { navigate } = useNavigation();
 
-  // Stub...Substituir por dados do backend
   useEffect(() => {
     (async () => {
       const adsCollection = await firestore()
         .collection('Ads')
-        //        .where('title', 'in', ['Pizza congelada'])
+        // .where('title', 'in', ['Pizza congelada'])
         .get();
 
       const stubAds: Ad[] = [];
-      // adsCollection.docs.forEach(async doc => {
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < adsCollection.docs.length; i++) {
+      for (let i = 0; i < adsCollection.docs.length; i += 1) {
         const doc = adsCollection.docs[i];
-        //        console.log(doc.data());
-        const ref = storage().ref(doc.data().image);
-        // eslint-disable-next-line no-await-in-loop
-        const url = await ref.getDownloadURL();
-        //        console.log(url);
-
         stubAds.push({
           id: doc.id,
           title: doc.data().title,
-          tags: ['LowCarb', 'Fit', 'GlutenFree'],
-          price: 15.9,
-          imageUrl: url,
-          description: 'Lorem Ipsum',
+          tags: ['LowCarb', 'Fit', 'GlutenFree'], // TODO:
+          price: parseFloat(doc.data().price),
+          imageUrl: doc.data().imageUrl,
+          description: doc.data().description,
         });
       }
       setAds(stubAds);
     })();
-
-    /*
-    const stubAds = [];
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < 0; i++) {
-      stubAds.push({
-        id: `${i}`,
-        title: `Anuncio ${i}`,
-        tags: ['LowCarb', 'Fit', 'GlutenFree'],
-        price: 15.9 + i,
-        imageUrl:
-          'https://image.shutterstock.com/image-vector/food-icon-design-template-260nw-1042503748.jpg',
-        description:
-          'Lorem Ipsum is simply dummy text of the printing and typesetting \
-industry. Lorem Ipsum has been the industrys standard dummy text \
-ever since the 1500s, when an unknown printer took a galley of type \
-and scrambled it to make a type specimen book. It has survived not \
-only five centuries, but also the leap into electronic typesetting, \
-remaining essentially unchanged. It was popularised in the 1960s \
-with the release of Letraset sheets containing Lorem Ipsum passages, \
-and more recently with',
-      });
-    }
-    setAds(stubAds);
-    */
   }, []);
 
   useEffect(() => {

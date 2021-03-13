@@ -6,20 +6,30 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
-import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
 import {
   ImagePickerResponse,
   launchCamera,
   launchImageLibrary,
 } from 'react-native-image-picker';
+import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import Icon from 'react-native-vector-icons/Feather';
+import { useNavigation } from '@react-navigation/native';
 
 import { useAuth } from '../../hooks/auth';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import { Container, ImageButton, Image } from './styles';
+import {
+  Container,
+  ImageButton,
+  Image,
+  AddImageText,
+  AddImageContainer,
+  Form,
+} from './styles';
+import { DARK_TEXT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
 
 interface AdFormContent {
   title: string;
@@ -29,38 +39,56 @@ interface AdFormContent {
   imageUrl: string;
 }
 
+interface ImageData {
+  uri: string;
+  fileName: string;
+}
+
 const NewAd: React.FC = () => {
+  const { navigate } = useNavigation();
   const formRef = useRef<FormHandles>(null);
   const descriptionInputRef = useRef<TextInput>(null);
   const priceInputRef = useRef<TextInput>(null);
   const { user } = useAuth();
-  // TODO: temp
-  const [imageUrl, setImageUrl] = useState(
-    'https://image.shutterstock.com/image-vector/food-icon-design-template-260nw-1042503748.jpg',
+  const [image, setImage] = useState<ImageData>({ uri: '', fileName: '' });
+
+  const uploadImage = useCallback(async () => {
+    const reference = storage().ref(image.fileName);
+    const { metadata } = await reference.putFile(image.uri);
+    const url = await reference.getDownloadURL();
+    console.log(url);
+    return url;
+  }, [image]);
+
+  const handleSave = useCallback(
+    async (data: AdFormContent) => {
+      // TODO: Adicionar um activity indicator aqui..
+      const imageUrl = await uploadImage();
+
+      firestore()
+        .collection('Ads')
+        .add({ ...data, imageUrl })
+        .then(() => {
+          console.log('User added!');
+          navigate('List');
+        });
+    },
+    [uploadImage],
   );
 
-  const handleSave = useCallback((data: AdFormContent) => {
-    console.log('Salvar!');
-  }, []);
-
   const uploadSelectedImage = useCallback((response: ImagePickerResponse) => {
-    if (response.didCancel) return;
+    if (
+      response.didCancel ||
+      response.uri === undefined ||
+      response.fileName === undefined
+    )
+      return;
     if (response.errorCode) {
       Alert.alert('Erro ao atualizar avatar.');
       return;
     }
 
-    (async () => {
-      console.log(response.fileName);
-      console.log(response.uri);
-
-      const reference = storage().ref(response.fileName);
-      const { metadata } = await reference.putFile(
-        response.uri ? response.uri : '',
-      );
-      console.log(metadata.fullPath);
-    })();
-    setImageUrl(response.uri || '');
+    setImage({ uri: response.uri!, fileName: response.fileName! });
   }, []);
 
   const handleUpdateAvatar = useCallback(() => {
@@ -95,14 +123,21 @@ const NewAd: React.FC = () => {
       >
         <Container>
           <ImageButton onPress={handleUpdateAvatar}>
-            <Image source={{ uri: imageUrl }} />
+            {image.uri === '' ? (
+              <AddImageContainer>
+                <Icon name="camera" size={50} color={NORMAL_TEXT_COLOR} />
+                <AddImageText>Selecione uma imagem</AddImageText>
+              </AddImageContainer>
+            ) : (
+              <Image source={image} />
+            )}
           </ImageButton>
 
           <Form ref={formRef} onSubmit={handleSave}>
             <Input
               name="title"
               icon=""
-              placeholder="Ex: Pizza congelada"
+              placeholder="Título"
               autoCorrect
               autoCapitalize="sentences"
               returnKeyType="next"
@@ -111,7 +146,7 @@ const NewAd: React.FC = () => {
             <Input
               name="description"
               icon=""
-              placeholder="Ex: Pizza congelada com 45cm de diâmetro, feita com massa caseira. Recheios: calabresa, 4 queijos, bacon."
+              placeholder="Descrição"
               autoCorrect
               autoCapitalize="sentences"
               ref={descriptionInputRef}
@@ -121,7 +156,7 @@ const NewAd: React.FC = () => {
             <Input
               name="price"
               icon=""
-              placeholder="Ex: 14,90"
+              placeholder="Preço (R$)"
               autoCorrect={false}
               autoCapitalize="none"
               keyboardType="decimal-pad"
