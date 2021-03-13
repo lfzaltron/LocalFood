@@ -5,7 +5,7 @@ import {
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
-import { Ad } from '.';
+import Ad from '../../types/Ad';
 
 import {
   BACKGROUND_COLOR,
@@ -56,19 +56,14 @@ export const AdList = styled(FlatList as new () => FlatList<Ad>)`
 `;
 
 export const AdContainer = styled(RectButton)`
-  padding: 10px;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
   flex-direction: row;
   align-items: center;
-
-  border-width: 2px;
-  border-radius: 2px;
-  border-color: ${LIGHT_HIGHLIGHT_COLOR};
 `;
 
 export const AdImage = styled.Image`
-  width: 72px;
-  height: 72px;
+  width: 90px;
+  height: 90px;
   border-radius: 2px;
 `;
 
