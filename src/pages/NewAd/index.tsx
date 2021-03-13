@@ -28,8 +28,9 @@ import {
   AddImageText,
   AddImageContainer,
   Form,
+  Loading,
 } from './styles';
-import { DARK_TEXT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
+import { HIGHLIGHT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
 
 interface AdFormContent {
   title: string;
@@ -51,29 +52,28 @@ const NewAd: React.FC = () => {
   const priceInputRef = useRef<TextInput>(null);
   const { user } = useAuth();
   const [image, setImage] = useState<ImageData>({ uri: '', fileName: '' });
+  const [loading, setLoading] = useState(false);
 
   const uploadImage = useCallback(async () => {
     const reference = storage().ref(image.fileName);
-    const { metadata } = await reference.putFile(image.uri);
-    const url = await reference.getDownloadURL();
-    console.log(url);
-    return url;
+    await reference.putFile(image.uri);
+    return reference.getDownloadURL();
   }, [image]);
 
   const handleSave = useCallback(
     async (data: AdFormContent) => {
-      // TODO: Adicionar um activity indicator aqui..
+      setLoading(true);
       const imageUrl = await uploadImage();
 
       firestore()
         .collection('Ads')
         .add({ ...data, imageUrl })
         .then(() => {
-          console.log('User added!');
+          setLoading(false);
           navigate('List');
         });
     },
-    [uploadImage],
+    [navigate, uploadImage],
   );
 
   const uploadSelectedImage = useCallback((response: ImagePickerResponse) => {
@@ -122,6 +122,9 @@ const NewAd: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       >
         <Container>
+          {loading && (
+            <Loading size="large" color={HIGHLIGHT_COLOR} animating={loading} />
+          )}
           <ImageButton onPress={handleUpdateAvatar}>
             {image.uri === '' ? (
               <AddImageContainer>
