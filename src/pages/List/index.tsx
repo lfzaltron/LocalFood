@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
+import firestore from '@react-native-firebase/firestore';
 
 import { useAuth } from '../../hooks/auth';
 import Ad from '../../types/Ad';
@@ -29,6 +30,18 @@ const List: React.FC = () => {
 
   // Stub...Substituir por dados do backend
   useEffect(() => {
+    (async () => {
+      const adsCollection = await firestore()
+        .collection('Ads')
+        .where('title', 'in', ['Pizza congelada'])
+        .get();
+      adsCollection.docs.forEach(doc => {
+        console.log(doc.data());
+      });
+      // console.log(adsCollection.docs);
+      // console.log({ adsCollection });
+    })();
+
     const stubAds = [];
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < 8; i++) {
