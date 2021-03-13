@@ -36,23 +36,23 @@ const List: React.FC = () => {
         .get();
 
       const stubAds: Ad[] = [];
+      const searchUpper = search.toUpperCase();
       for (let i = 0; i < adsCollection.docs.length; i += 1) {
         const doc = adsCollection.docs[i];
-        stubAds.push({
-          id: doc.id,
-          title: doc.data().title,
-          tags: ['LowCarb', 'Fit', 'GlutenFree'], // TODO:
-          price: parseFloat(doc.data().price),
-          imageUrl: doc.data().imageUrl,
-          description: doc.data().description,
-        });
+        const title = doc.data().title.toUpperCase();
+        if (title.includes(searchUpper)) {
+          stubAds.push({
+            id: doc.id,
+            title: doc.data().title,
+            tags: ['LowCarb', 'Fit', 'GlutenFree'], // TODO:
+            price: parseFloat(doc.data().price),
+            imageUrl: doc.data().imageUrl,
+            description: doc.data().description,
+          });
+        }
       }
       setAds(stubAds);
     })();
-  }, []);
-
-  useEffect(() => {
-    console.log(search);
   }, [search]);
 
   const navigatToDetail = useCallback(
