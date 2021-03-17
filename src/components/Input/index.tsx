@@ -15,6 +15,7 @@ import { Container, TextInput, Icon } from './styles';
 interface InputProps extends TextInputProps {
   name: string;
   icon: string;
+  numberOfLines?: number;
 }
 
 interface InputValueReference {
@@ -26,7 +27,7 @@ interface InputRef {
 }
 
 const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
-  { name, icon, ...rest },
+  { name, icon, numberOfLines = 1, ...rest },
   ref,
 ) => {
   const inputElementRef = useRef<any>(null);
@@ -66,7 +67,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   }, [registerField, fieldName]);
 
   return (
-    <Container isFocused={isFocused}>
+    <Container isFocused={isFocused} numberOfLines={numberOfLines}>
       <Icon
         name={icon}
         size={20}
@@ -83,6 +84,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
           inputValueRef.current.value = value;
         }}
         placeholderTextColor={NORMAL_TEXT_COLOR}
+        numberOfLines={numberOfLines}
         {...rest}
       />
     </Container>

@@ -154,7 +154,9 @@ const NewAd: React.FC = () => {
               autoCapitalize="sentences"
               ref={descriptionInputRef}
               returnKeyType="next"
-              onSubmitEditing={() => priceInputRef.current?.focus()}
+              multiline
+              numberOfLines={5}
+              textAlignVertical="top"
             />
             <Input
               name="price"

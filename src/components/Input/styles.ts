@@ -9,12 +9,17 @@ import {
 
 interface ContainerProps {
   isFocused: boolean;
+  numberOfLines: number;
+}
+
+interface InputProps {
+  numberOfLines: number;
 }
 
 export const Container = styled.View<ContainerProps>`
   width: 100%;
-  height: 60px;
-  padding: 0 16px;
+  height: ${props => props.numberOfLines * 22 + 38}px;
+  padding: 16px 16px;
   background: ${LIGHT_HIGHLIGHT_COLOR};
   border-radius: 10px;
   margin-bottom: 8px;
@@ -34,9 +39,10 @@ export const Icon = styled(FeatherIcon)`
   margin-right: 16px;
 `;
 
-export const TextInput = styled.TextInput`
+export const TextInput = styled.TextInput<InputProps>`
   flex: 1;
   color: ${DARK_TEXT_COLOR};
   font-family: 'RobotoSlab-Regular';
   font-size: 16px;
+  height: ${props => props.numberOfLines * 22}px;
 `;
