@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState, useEffect } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -29,8 +29,13 @@ import {
   AddImageContainer,
   Form,
   Loading,
+  TagList,
+  TagContainer,
+  TagText,
+  ListContainer,
 } from './styles';
 import { HIGHLIGHT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
+import Tag from '../../types/Tag';
 
 interface AdFormContent {
   title: string;
@@ -45,6 +50,11 @@ interface ImageData {
   fileName: string;
 }
 
+export interface TagItem {
+  tag: Tag;
+  checked: boolean;
+}
+
 const NewAd: React.FC = () => {
   const { navigate } = useNavigation();
   const formRef = useRef<FormHandles>(null);
@@ -53,6 +63,7 @@ const NewAd: React.FC = () => {
   const { user } = useAuth();
   const [image, setImage] = useState<ImageData>({ uri: '', fileName: '' });
   const [loading, setLoading] = useState(false);
+  const [tags, setTags] = useState<TagItem[]>([]);
 
   const uploadImage = useCallback(async () => {
     const reference = storage().ref(image.fileName);
@@ -64,16 +75,19 @@ const NewAd: React.FC = () => {
     async (data: AdFormContent) => {
       setLoading(true);
       const imageUrl = await uploadImage();
+      const selectedTags = tags
+        .filter(item => item.checked)
+        .map(item => item.tag);
 
       firestore()
         .collection('Ads')
-        .add({ ...data, imageUrl })
+        .add({ ...data, imageUrl, tags: selectedTags })
         .then(() => {
           setLoading(false);
           navigate('List');
         });
     },
-    [navigate, uploadImage],
+    [navigate, tags, uploadImage],
   );
 
   const uploadSelectedImage = useCallback((response: ImagePickerResponse) => {
@@ -90,6 +104,19 @@ const NewAd: React.FC = () => {
 
     setImage({ uri: response.uri!, fileName: response.fileName! });
   }, []);
+
+  const selectTag = useCallback(
+    (tag: TagItem) => {
+      setTags(
+        tags.map(item => {
+          // eslint-disable-next-line no-param-reassign
+          if (item.tag === tag.tag) item.checked = !item.checked;
+          return item;
+        }),
+      );
+    },
+    [tags],
+  );
 
   const handleUpdateAvatar = useCallback(() => {
     Alert.alert(
@@ -111,16 +138,61 @@ const NewAd: React.FC = () => {
     );
   }, [uploadSelectedImage]);
 
+  useEffect(() => {
+    setTags([
+      {
+        checked: false,
+        tag: {
+          id: '1',
+          title: 'Fitness',
+        },
+      },
+      {
+        checked: false,
+        tag: {
+          id: '2',
+          title: 'LowCarb',
+        },
+      },
+      {
+        checked: false,
+        tag: {
+          id: '3',
+          title: 'Congelado',
+        },
+      },
+      {
+        checked: false,
+        tag: {
+          id: '4',
+          title: 'GlutenFree',
+        },
+      },
+      {
+        checked: false,
+        tag: {
+          id: '5',
+          title: 'Gordice',
+        },
+      },
+      {
+        checked: false,
+        tag: {
+          id: '6',
+          title: 'Farinhada',
+        },
+      },
+    ]);
+  }, []);
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={100}
       enabled
     >
-      <ScrollView
-        contentContainerStyle={{ flex: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps="handled">
         <Container>
           {loading && (
             <Loading size="large" color={HIGHLIGHT_COLOR} animating={loading} />
@@ -158,6 +230,22 @@ const NewAd: React.FC = () => {
               numberOfLines={5}
               textAlignVertical="top"
             />
+            <ListContainer>
+              <TagList
+                data={tags}
+                keyExtractor={item => item.tag.id}
+                renderItem={({ item }) => (
+                  <TagContainer onPress={() => selectTag(item)}>
+                    <TagText checked={item.checked}>{item.tag.title}</TagText>
+                    <Icon
+                      name={item.checked ? 'check-circle' : 'circle'}
+                      size={20}
+                      color={item.checked ? HIGHLIGHT_COLOR : NORMAL_TEXT_COLOR}
+                    />
+                  </TagContainer>
+                )}
+              />
+            </ListContainer>
             <Input
               name="price"
               icon=""

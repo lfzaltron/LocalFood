@@ -45,4 +45,5 @@ export const TextInput = styled.TextInput<InputProps>`
   font-family: 'RobotoSlab-Regular';
   font-size: 16px;
   height: ${props => props.numberOfLines * 22}px;
+  min-height: 60px;
 `;
