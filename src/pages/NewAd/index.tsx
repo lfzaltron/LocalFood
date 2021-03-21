@@ -77,7 +77,7 @@ const NewAd: React.FC = () => {
       const imageUrl = await uploadImage();
       const selectedTags = tags
         .filter(item => item.checked)
-        .map(item => item.tag);
+        .map(item => item.tag.title);
 
       firestore()
         .collection('Ads')
@@ -139,50 +139,16 @@ const NewAd: React.FC = () => {
   }, [uploadSelectedImage]);
 
   useEffect(() => {
-    setTags([
-      {
-        checked: false,
-        tag: {
-          id: '1',
-          title: 'Fitness',
-        },
-      },
-      {
-        checked: false,
-        tag: {
-          id: '2',
-          title: 'LowCarb',
-        },
-      },
-      {
-        checked: false,
-        tag: {
-          id: '3',
-          title: 'Congelado',
-        },
-      },
-      {
-        checked: false,
-        tag: {
-          id: '4',
-          title: 'GlutenFree',
-        },
-      },
-      {
-        checked: false,
-        tag: {
-          id: '5',
-          title: 'Gordice',
-        },
-      },
-      {
-        checked: false,
-        tag: {
-          id: '6',
-          title: 'Farinhada',
-        },
-      },
-    ]);
+    (async () => {
+      const tagsCollection = await firestore().collection('Tags').get();
+
+      setTags(
+        tagsCollection.docs.map(item => ({
+          checked: false,
+          tag: { title: item.id },
+        })),
+      );
+    })();
   }, []);
 
   return (
@@ -233,7 +199,7 @@ const NewAd: React.FC = () => {
             <ListContainer>
               <TagList
                 data={tags}
-                keyExtractor={item => item.tag.id}
+                keyExtractor={item => item.tag.title}
                 renderItem={({ item }) => (
                   <TagContainer onPress={() => selectTag(item)}>
                     <TagText checked={item.checked}>{item.tag.title}</TagText>
