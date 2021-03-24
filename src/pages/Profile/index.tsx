@@ -25,6 +25,7 @@ import {
   UpdateLocationButton,
   UpdateLocationText,
 } from './styles';
+import { useGeolocation } from '../../hooks/geolocation';
 
 interface UserFormData {
   name: string;
@@ -38,19 +39,20 @@ const Profile: React.FC = () => {
   const nameInputRef = useRef<TextInput>(null);
   const [saving, setSaving] = useState(false);
   const { signOut, user, updateUserData } = useAuth();
+  const { currentPosition, updateCurrentPosition } = useGeolocation();
 
   const handleSave = useCallback(
     (data: UserFormData) => {
       setSaving(true);
 
-      updateUserData({ ...user, ...data })
+      updateUserData({ ...user, ...data, ...currentPosition })
         .then(() => Alert.alert('Feito', 'Alterações salvas com sucesso!'))
         .catch(() =>
           Alert.alert('Erro ao salvar dados', 'Por favor, tente novamente.'),
         )
         .finally(() => setSaving(false));
     },
-    [updateUserData, user],
+    [currentPosition, updateUserData, user],
   );
 
   return (
@@ -107,7 +109,7 @@ const Profile: React.FC = () => {
                 numberOfLines={3}
                 textAlignVertical="top"
               />
-              <UpdateLocationButton>
+              <UpdateLocationButton onPress={updateCurrentPosition}>
                 <Icon name="map-pin" size={20} color={HIGHLIGHT_COLOR} />
                 <UpdateLocationText>
                   Atualizar localização GPS
