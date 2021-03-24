@@ -5,12 +5,17 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import auth from '@react-native-firebase/auth';
+import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 interface User {
   id: string;
   name: string;
   email: string;
+  phoneNumber: string;
+  address: string;
+  latitude: number;
+  longitude: number;
 }
 
 interface AuthData {
@@ -34,6 +39,7 @@ interface AuthContextData {
   signUp(credentials: SignUpCredentials): Promise<void>;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
+  updateUserData(data: User): Promise<void>;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -42,24 +48,42 @@ const AuthProvider: React.FC = ({ children }) => {
   const [data, setData] = useState<AuthData>({} as AuthData);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    auth().onAuthStateChanged(user => {
-      if (user) {
+  const getUserData = useCallback(() => {
+    const user = auth().currentUser;
+    if (user === null) return;
+
+    firestore()
+      .collection('Users')
+      .doc(user.uid)
+      .get()
+      .then(doc => {
+        const userData = doc.data();
         setData({
           user: {
             id: user.uid,
-            name: user.displayName ? user.displayName : '',
-            email: user.email ? user.email : '',
+            email: user.email || '',
+            name: userData?.name,
+            phoneNumber: userData?.phoneNumber,
+            address: userData?.address,
+            latitude: userData?.latitude,
+            longitude: userData?.longitude,
           },
           token: '',
         });
+      });
+  }, []);
+
+  useEffect(() => {
+    auth().onAuthStateChanged(user => {
+      if (user) {
+        getUserData();
       } else {
         setData({} as AuthData);
       }
 
       setLoading(false);
     });
-  }, []);
+  }, [getUserData]);
 
   const signUp = useCallback(async ({ email, password }) => {
     await auth()
@@ -99,9 +123,32 @@ const AuthProvider: React.FC = ({ children }) => {
       .catch(() => setLoading(false));
   }, []);
 
+  const updateUserData = useCallback(
+    (updated: User) => {
+      const { email, id, ...updatable } = updated;
+
+      if (data.user.id !== id)
+        throw new Error('User to be updated is not loged in');
+
+      return firestore()
+        .collection('Users')
+        .doc(data.user.id)
+        .set(updatable)
+        .then(() => getUserData());
+    },
+    [data, getUserData],
+  );
+
   return (
     <AuthContext.Provider
-      value={{ user: data.user, loading, signUp, signIn, signOut }}
+      value={{
+        user: data.user,
+        loading,
+        signUp,
+        signIn,
+        signOut,
+        updateUserData,
+      }}
     >
       {children}
     </AuthContext.Provider>

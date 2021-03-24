@@ -38,13 +38,16 @@ const SignUp: React.FC = () => {
   const navigation = useNavigation();
   const { signUp } = useAuth();
 
-  const handleSignUp = useCallback((data: SignUpFormData) => {
-    signUp({ email: data.email, password: data.password })
-      .then(() => {
-        Alert.alert('Ok', 'Cadastro realizado com sucesso!');
-      })
-      .catch((error: Error) => Alert.alert('Erro', error.message));
-  }, []);
+  const handleSignUp = useCallback(
+    (data: SignUpFormData) => {
+      signUp({ email: data.email, password: data.password })
+        .then(() => {
+          Alert.alert('Ok', 'Cadastro realizado com sucesso!');
+        })
+        .catch((error: Error) => Alert.alert('Erro', error.message));
+    },
+    [signUp],
+  );
 
   return (
     <>

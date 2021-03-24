@@ -12,10 +12,11 @@ const ProfileStack = createStackNavigator();
 const ProfileRoutes: React.FC = () => (
   <ProfileStack.Navigator
     screenOptions={{
-      headerShown: false,
+      headerShown: true,
       headerTintColor: DARK_TEXT_COLOR,
       headerStyle: { backgroundColor: LIGHT_HIGHLIGHT_COLOR },
       cardStyle: { backgroundColor: BACKGROUND_COLOR },
+      headerTitle: 'Perfil',
     }}
   >
     <ProfileStack.Screen name="Profile" component={Profile} />
