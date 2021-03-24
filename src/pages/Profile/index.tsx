@@ -1,6 +1,5 @@
 import React, { useRef, useCallback, useState } from 'react';
 import {
-  Text,
   KeyboardAvoidingView,
   ScrollView,
   Platform,
@@ -13,11 +12,7 @@ import { FormHandles } from '@unform/core';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
-import {
-  DARK_TEXT_COLOR,
-  HIGHLIGHT_COLOR,
-  NORMAL_TEXT_COLOR,
-} from '../../constants';
+import { HIGHLIGHT_COLOR } from '../../constants';
 import { useAuth } from '../../hooks/auth';
 
 import {
