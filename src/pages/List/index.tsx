@@ -3,7 +3,6 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 
-import { useAuth } from '../../hooks/auth';
 import Ad from '../../types/Ad';
 
 import {
@@ -24,7 +23,6 @@ import { DARK_TEXT_COLOR } from '../../constants';
 
 const List: React.FC = () => {
   const [ads, setAds] = useState<Ad[]>([]);
-  const { signOut } = useAuth();
   const [search, setSearch] = useState('');
   const { navigate } = useNavigation();
 
@@ -40,15 +38,29 @@ const List: React.FC = () => {
       for (let i = 0; i < adsCollection.docs.length; i += 1) {
         const doc = adsCollection.docs[i];
         const title = doc.data().title.toUpperCase();
+
+        const currentAd = {
+          id: doc.id,
+          title: doc.data().title,
+          tags: doc.data().tags,
+          price: parseFloat(doc.data().price),
+          imageUrl: doc.data().imageUrl,
+          description: doc.data().description,
+          user: {
+            id: doc.data().userId,
+            name: '',
+          },
+        };
+
         if (title.includes(searchUpper)) {
-          stubAds.push({
-            id: doc.id,
-            title: doc.data().title,
-            tags: ['LowCarb', 'Fit', 'GlutenFree'], // TODO:
-            price: parseFloat(doc.data().price),
-            imageUrl: doc.data().imageUrl,
-            description: doc.data().description,
-          });
+          firestore()
+            .collection('Users')
+            .doc(currentAd.user.id)
+            .get()
+            .then(userData => {
+              currentAd.user.name = userData.data()?.name;
+            });
+          stubAds.push(currentAd);
         }
       }
       setAds(stubAds);

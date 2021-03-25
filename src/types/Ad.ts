@@ -5,4 +5,8 @@ export default interface Ad {
   tags: string[];
   price: number;
   imageUrl: string;
+  user: {
+    id: string;
+    name: string;
+  };
 }

@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 import { StackNavigationOptions } from '@react-navigation/stack';
 
 import Icon from 'react-native-vector-icons/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
-import { DARK_TEXT_COLOR } from '../../constants';
+import { DARK_TEXT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
 import Ad from '../../types/Ad';
 
 import {
@@ -20,6 +20,9 @@ import {
   TagText,
   BuyButton,
   BuyButtonText,
+  SellerContainer,
+  SellerTitle,
+  SellerName,
 } from './styles';
 
 interface AdDetailProps {
@@ -29,7 +32,6 @@ interface AdDetailProps {
 }
 
 const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
-  const { goBack } = useNavigation();
   const route = useRoute();
   const ad = route.params as Ad;
 
@@ -69,6 +71,12 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
               </Tag>
             )}
           />
+
+          <SellerTitle>Produtor:</SellerTitle>
+          <SellerContainer>
+            <Icon name="user" size={20} color={DARK_TEXT_COLOR} />
+            <SellerName>{ad.user.name}</SellerName>
+          </SellerContainer>
         </DataContainer>
       </ScrollView>
       <BuyButton onPress={() => console.log('Comprouuu!!')}>

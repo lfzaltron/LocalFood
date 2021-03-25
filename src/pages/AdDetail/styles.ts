@@ -55,7 +55,9 @@ export const Description = styled.Text`
   padding-bottom: 24px;
 `;
 
-export const TagList = styled(FlatList as new () => FlatList<string>)``;
+export const TagList = styled(FlatList as new () => FlatList<string>)`
+  padding-bottom: 24px;
+`;
 
 export const Tag = styled.View`
   flex-direction: row;
@@ -71,7 +73,6 @@ export const TagText = styled.Text`
   margin-left: 8px;
 `;
 
-// TODO: Vou usar esses estilos como botão de comprar.
 export const BuyButton = styled.TouchableOpacity`
   position: absolute;
   left: 0;
@@ -92,4 +93,23 @@ export const BuyButtonText = styled.Text`
   color: ${HIGHLIGHT_COLOR};
   font-size: 18px;
   margin-left: 16px;
+`;
+
+export const SellerTitle = styled.Text`
+  font-family: 'RobotoSlab-Regular';
+  font-size: 18px;
+  color: ${NORMAL_TEXT_COLOR};
+  padding-bottom: 12px;
+`;
+
+export const SellerContainer = styled.TouchableOpacity`
+  flex-direction: row;
+`;
+
+export const SellerName = styled.Text`
+  font-family: 'RobotoSlab-Regular';
+  font-size: 18px;
+  color: ${DARK_TEXT_COLOR};
+  padding-bottom: 12px;
+  margin-left: 12px;
 `;
