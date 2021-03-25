@@ -81,13 +81,20 @@ const NewAd: React.FC = () => {
 
       firestore()
         .collection('Ads')
-        .add({ ...data, imageUrl, tags: selectedTags })
+        .add({
+          ...data,
+          imageUrl,
+          tags: selectedTags,
+          userId: user.id,
+          latitude: user.latitude,
+          longitude: user.longitude,
+        })
         .then(() => {
           setLoading(false);
           navigate('List');
         });
     },
-    [navigate, tags, uploadImage],
+    [navigate, tags, uploadImage, user],
   );
 
   const uploadSelectedImage = useCallback((response: ImagePickerResponse) => {
