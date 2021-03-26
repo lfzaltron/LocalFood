@@ -1,16 +1,15 @@
-import React, { useEffect } from 'react';
-import { useRoute } from '@react-navigation/native';
+import React, { useEffect, useCallback } from 'react';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationOptions } from '@react-navigation/stack';
-
 import Icon from 'react-native-vector-icons/Feather';
+
 import { ScrollView } from 'react-native-gesture-handler';
 import { DARK_TEXT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
 import Ad from '../../types/Ad';
+import Header from '../../components/Header';
 
 import {
   Container,
-  HeaderContainer,
-  HeaderTitle,
   AdImage,
   Price,
   DataContainer,
@@ -32,21 +31,22 @@ interface AdDetailProps {
 }
 
 const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
+  const { navigate } = useNavigation();
   const route = useRoute();
   const ad = route.params as Ad;
 
   useEffect(
     () =>
       navigation.setOptions({
-        headerTitle: () => (
-          <HeaderContainer>
-            <HeaderTitle>{ad.title}</HeaderTitle>
-          </HeaderContainer>
-        ),
+        headerTitle: () => <Header>{ad.title}</Header>,
         headerBackTitleVisible: false,
       }),
     [navigation, ad],
   );
+
+  const handleSellerButtonPress = useCallback(() => {
+    navigate('Seller', { userId: ad.user.id });
+  }, [ad.user.id, navigate]);
 
   return (
     <Container>
@@ -73,7 +73,7 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
           />
 
           <SellerTitle>Produtor:</SellerTitle>
-          <SellerContainer>
+          <SellerContainer onPress={handleSellerButtonPress}>
             <Icon name="user" size={20} color={DARK_TEXT_COLOR} />
             <SellerName>{ad.user.name}</SellerName>
           </SellerContainer>

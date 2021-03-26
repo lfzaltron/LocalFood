@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import List from '../pages/List';
 import AdDetail from '../pages/AdDetail';
+import Seller from '../pages/Seller';
 
 import {
   BACKGROUND_COLOR,
@@ -25,6 +26,11 @@ const MainRoutes: React.FC = () => (
     <Main.Screen
       name="AdDetail"
       component={AdDetail}
+      options={{ headerShown: true, title: '' }}
+    />
+    <Main.Screen
+      name="Seller"
+      component={Seller}
       options={{ headerShown: true, title: '' }}
     />
   </Main.Navigator>
