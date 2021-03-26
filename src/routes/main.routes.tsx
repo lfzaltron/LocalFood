@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import List from '../pages/List';
 import AdDetail from '../pages/AdDetail';
 import Seller from '../pages/Seller';
+import Header from '../components/Header';
 
 import {
   BACKGROUND_COLOR,
@@ -31,7 +32,11 @@ const MainRoutes: React.FC = () => (
     <Main.Screen
       name="Seller"
       component={Seller}
-      options={{ headerShown: true, title: '' }}
+      options={{
+        headerShown: true,
+        headerBackTitleVisible: false,
+        headerTitle: () => <Header>Vendedor</Header>,
+      }}
     />
   </Main.Navigator>
 );

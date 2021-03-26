@@ -4,7 +4,7 @@ import { StackNavigationOptions } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Feather';
 
 import { ScrollView } from 'react-native-gesture-handler';
-import { DARK_TEXT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
+import { DARK_TEXT_COLOR } from '../../constants';
 import Ad from '../../types/Ad';
 import Header from '../../components/Header';
 
@@ -20,7 +20,7 @@ import {
   BuyButton,
   BuyButtonText,
   SellerContainer,
-  SellerTitle,
+  SectionTitle,
   SellerName,
 } from './styles';
 
@@ -57,7 +57,10 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
             R$
             {` ${ad.price.toFixed(2)}`}
           </Price>
+          <SectionTitle>Descrição:</SectionTitle>
           <Description>{ad.description}</Description>
+
+          <SectionTitle>Tags:</SectionTitle>
           <TagList
             data={ad.tags}
             numColumns={2}
@@ -72,7 +75,7 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
             )}
           />
 
-          <SellerTitle>Produtor:</SellerTitle>
+          <SectionTitle>Vendedor:</SectionTitle>
           <SellerContainer onPress={handleSellerButtonPress}>
             <Icon name="user" size={20} color={DARK_TEXT_COLOR} />
             <SellerName>{ad.user.name}</SellerName>

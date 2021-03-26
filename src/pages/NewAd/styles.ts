@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { FlatList, Platform } from 'react-native';
+import { FlatList } from 'react-native';
 import { Form as Unform } from '@unform/mobile';
 
 import { TagItem } from '.';

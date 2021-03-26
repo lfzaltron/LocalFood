@@ -2,6 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import NewAd from '../pages/NewAd';
+import Header from '../components/Header';
 
 import {
   BACKGROUND_COLOR,
@@ -23,7 +24,7 @@ const NewAdRoutes: React.FC = () => (
     <NewAdStack.Screen
       name="NewAd"
       component={NewAd}
-      options={{ title: 'Novo anúncio' }}
+      options={{ headerTitle: () => <Header>Novo anúncio</Header> }}
     />
   </NewAdStack.Navigator>
 );

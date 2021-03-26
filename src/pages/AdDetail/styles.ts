@@ -1,4 +1,3 @@
-import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import styled from 'styled-components/native';
 import { FlatList } from 'react-native';
 
@@ -6,7 +5,6 @@ import {
   BACKGROUND_COLOR,
   DARK_TEXT_COLOR,
   HIGHLIGHT_COLOR,
-  LIGHT_HIGHLIGHT_COLOR,
   NORMAL_TEXT_COLOR,
   SMOOTH_HIGHLIGHT_COLOR,
 } from '../../constants';
@@ -34,7 +32,7 @@ export const Price = styled.Text`
 export const Description = styled.Text`
   font-family: 'RobotoSlab-Regular';
   font-size: 18px;
-  color: ${NORMAL_TEXT_COLOR};
+  color: ${DARK_TEXT_COLOR};
   padding-bottom: 24px;
 `;
 
@@ -78,7 +76,7 @@ export const BuyButtonText = styled.Text`
   margin-left: 16px;
 `;
 
-export const SellerTitle = styled.Text`
+export const SectionTitle = styled.Text`
   font-family: 'RobotoSlab-Regular';
   font-size: 18px;
   color: ${NORMAL_TEXT_COLOR};

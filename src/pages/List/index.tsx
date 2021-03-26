@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -11,15 +11,9 @@ import {
   FindContainer,
   FindField,
   FilterButton,
-  AdList,
-  AdContainer,
-  AdImage,
-  AdInfo,
-  AdTitle,
-  AdMeta,
-  AdMetaText,
 } from './styles';
 import { DARK_TEXT_COLOR } from '../../constants';
+import ListAds from '../../components/ListAds';
 
 const List: React.FC = () => {
   const [ads, setAds] = useState<Ad[]>([]);
@@ -67,13 +61,6 @@ const List: React.FC = () => {
     })();
   }, [search]);
 
-  const navigatToDetail = useCallback(
-    ad => {
-      navigate('AdDetail', ad);
-    },
-    [navigate],
-  );
-
   return (
     <Container>
       <TopBar>
@@ -88,28 +75,7 @@ const List: React.FC = () => {
           <Icon name="filter" size={28} color={DARK_TEXT_COLOR} />
         </FilterButton>
       </TopBar>
-      <AdList
-        data={ads}
-        keyExtractor={ad => ad.id}
-        renderItem={({ item: ad }) => (
-          <AdContainer onPress={() => navigatToDetail(ad)}>
-            <AdImage source={{ uri: ad.imageUrl }} />
-            <AdInfo>
-              <AdTitle>{ad.title}</AdTitle>
-              <AdMeta>
-                <Icon name="tag" size={14} color={DARK_TEXT_COLOR} />
-                <AdMetaText>{ad.tags.join(' / ')}</AdMetaText>
-              </AdMeta>
-              <AdMeta>
-                <AdMetaText>
-                  R$
-                  {` ${ad.price.toFixed(2)}`}
-                </AdMetaText>
-              </AdMeta>
-            </AdInfo>
-          </AdContainer>
-        )}
-      />
+      <ListAds ads={ads} />
     </Container>
   );
 };

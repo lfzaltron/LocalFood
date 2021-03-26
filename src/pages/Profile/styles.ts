@@ -3,7 +3,6 @@ import {
   DARK_TEXT_COLOR,
   HIGHLIGHT_COLOR,
   LIGHT_HIGHLIGHT_COLOR,
-  NORMAL_TEXT_COLOR,
 } from '../../constants';
 
 export const Container = styled.View`
