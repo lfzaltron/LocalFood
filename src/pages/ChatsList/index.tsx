@@ -30,6 +30,8 @@ const ChatsList: React.FC = () => {
 
   useEffect(() => {
     (async () => {
+      // TODO: Adicionar um activity indicator
+      // TODO: SetLoading(true);
       const chatsCollection = await firestore()
         .collection('Chats')
         .where('users', 'array-contains', user.id)
@@ -71,12 +73,14 @@ const ChatsList: React.FC = () => {
       const teste = await Promise.all(chatsArray);
 
       setChats(teste);
+      // TODO: setLoading(false);
     })();
   }, [user]);
 
   const navigateToDetail = useCallback(
     (chat: Chat) => {
       navigate('ChatMessages', {
+        chatId: chat.id,
         otherUserId: chat.otherUser.id,
         otherUserName: chat.otherUser.name,
       });
@@ -94,7 +98,7 @@ const ChatsList: React.FC = () => {
       ) : (
         <ChatsListView
           data={chats}
-          keyExtractor={chat => chat.otherUser.id}
+          keyExtractor={chat => chat.id}
           renderItem={({ item: chat }) => (
             <ChatContainer>
               <ChatButton onPress={() => navigateToDetail(chat)}>

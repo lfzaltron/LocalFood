@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Feather';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 
 import { useAuth } from '../../hooks/auth';
 import ListMessages from '../../components/ListMessages';
@@ -19,6 +22,7 @@ interface ChatMessagesProps {
 }
 
 interface ChatMessagesRouteParams {
+  chatId: string;
   otherUserId: string;
   otherUserName: string;
 }
@@ -28,6 +32,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
   const { user } = useAuth();
   const route = useRoute();
   const {
+    chatId,
     otherUserId,
     otherUserName,
   } = route.params as ChatMessagesRouteParams;
@@ -41,83 +46,32 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
     [navigation, otherUserName],
   );
 
+  const onMessagesChange = useCallback(
+    (snapshot: FirebaseFirestoreTypes.QuerySnapshot) => {
+      setMessages(
+        snapshot.docs.map(
+          message =>
+            ({
+              id: message.id,
+              ...message.data(),
+            } as Message),
+        ),
+      );
+    },
+    [],
+  );
+
   useEffect(() => {
-    setMessages([
-      {
-        id: '111',
-        text: 'Bom dia, tudo bem?',
-        from: { id: user.id, name: user.name },
-        to: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '112',
-        text: 'Tudo bem, e você?',
-        to: { id: user.id, name: user.name },
-        from: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '113',
-        text:
-          'Gostaria de saber qual o valor se eu comprar 3 ítens e se você tem como entregar no bairro cidade baixa',
-        to: { id: user.id, name: user.name },
-        from: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '114',
-        text:
-          'Gostaria de saber qual o valor se eu comprar 3 ítens e se você tem como entregar no bairro cidade baixa',
-        from: { id: user.id, name: user.name },
-        to: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '115',
-        text: 'Entrego sim. \nProdutos 35,00 \nEntrega 12,00 \nTotal 47,00',
-        to: { id: user.id, name: user.name },
-        from: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '116',
-        text: 'Bom dia, tudo bem?',
-        from: { id: user.id, name: user.name },
-        to: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '117',
-        text: 'Tudo bem, e você?',
-        to: { id: user.id, name: user.name },
-        from: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '118',
-        text:
-          'Gostaria de saber qual o valor se eu comprar 3 ítens e se você tem como entregar no bairro cidade baixa',
-        to: { id: user.id, name: user.name },
-        from: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '119',
-        text:
-          'Gostaria de saber qual o valor se eu comprar 3 ítens e se você tem como entregar no bairro cidade baixa',
-        from: { id: user.id, name: user.name },
-        to: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-      {
-        id: '120',
-        text: 'Entrego sim. \nProdutos 35,00 \nEntrega 12,00 \nTotal 47,00',
-        to: { id: user.id, name: user.name },
-        from: { id: otherUserId, name: 'O Cara que Vende' },
-        dateTime: new Date(),
-      },
-    ]);
+    firestore()
+      .collection('Chats')
+      .doc(chatId)
+      .get()
+      .then(snapshot => {
+        snapshot.ref
+          .collection('Messages')
+          .orderBy('dateTime')
+          .onSnapshot(onMessagesChange);
+      });
   }, [otherUserId, user]);
 
   return (
