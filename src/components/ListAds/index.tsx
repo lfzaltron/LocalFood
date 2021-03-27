@@ -22,7 +22,7 @@ interface ListAdsProps {
 const ListAds: React.FC<ListAdsProps> = ({ ads }) => {
   const { navigate } = useNavigation();
 
-  const navigatToDetail = useCallback(
+  const navigateToDetail = useCallback(
     ad => {
       navigate('AdDetail', ad);
     },
@@ -34,7 +34,7 @@ const ListAds: React.FC<ListAdsProps> = ({ ads }) => {
       data={ads}
       keyExtractor={ad => ad.id}
       renderItem={({ item: ad }) => (
-        <AdContainer onPress={() => navigatToDetail(ad)}>
+        <AdContainer onPress={() => navigateToDetail(ad)}>
           <AdImage source={{ uri: ad.imageUrl }} />
           <AdInfo>
             <AdTitle>{ad.title}</AdTitle>

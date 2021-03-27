@@ -5,9 +5,10 @@ import Icon from 'react-native-vector-icons/Feather';
 import { useAuth } from '../hooks/auth';
 
 import Auth from './auth.routes';
+import Chats from './chat.routes';
 import Main from './main.routes';
-import Profile from './profile.routes';
 import NewAd from './newAd.routes';
+import Profile from './profile.routes';
 
 import {
   BACKGROUND_COLOR,
@@ -29,6 +30,8 @@ const TabRoutes: React.FC = () => {
 
           if (route.name === 'List') {
             iconName = 'list';
+          } else if (route.name === 'Chats') {
+            iconName = 'message-circle';
           } else if (route.name === 'Profile') {
             iconName = !user ? 'log-in' : 'user';
           } else if (route.name === 'NewAd') {
@@ -50,12 +53,14 @@ const TabRoutes: React.FC = () => {
       <Tab.Screen name="List" component={Main} />
       {!user && (
         <>
+          <Tab.Screen name="Chats" component={Auth} />
           <Tab.Screen name="NewAd" component={Auth} />
           <Tab.Screen name="Profile" component={Auth} />
         </>
       )}
       {!!user && (
         <>
+          <Tab.Screen name="Chats" component={Chats} />
           <Tab.Screen name="NewAd" component={NewAd} />
           <Tab.Screen name="Profile" component={Profile} />
         </>

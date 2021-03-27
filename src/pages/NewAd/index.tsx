@@ -198,7 +198,7 @@ const NewAd: React.FC = () => {
               autoCorrect
               autoCapitalize="sentences"
               ref={descriptionInputRef}
-              returnKeyType="next"
+              returnKeyType="default"
               multiline
               numberOfLines={5}
               textAlignVertical="top"
