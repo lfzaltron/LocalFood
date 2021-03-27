@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
+import firestore from '@react-native-firebase/firestore';
+
+import { useAuth } from '../../hooks/auth';
 import { NORMAL_TEXT_COLOR } from '../../constants';
 
 import {
@@ -15,38 +18,68 @@ import {
 } from './styles';
 
 export interface Chat {
-  from: { id: string; name: string };
-  to: { id: string; name: string };
+  id: string;
+  otherUser: { id: string; name: string };
   lastMessage: string;
 }
 
 const ChatsList: React.FC = () => {
   const [chats, setChats] = useState<Chat[]>([]);
   const { navigate } = useNavigation();
+  const { user } = useAuth();
 
   useEffect(() => {
-    setChats([
-      {
-        from: { id: '123', name: 'Luis' },
-        to: { id: '233', name: 'John Doe' },
-        lastMessage: 'This was the last message',
-      },
-      {
-        from: { id: '123', name: 'Luis' },
-        to: { id: '345', name: 'Jane Doe' },
-        lastMessage: 'Ok. Thanks!',
-      },
-      {
-        from: { id: '123', name: 'Luis' },
-        to: { id: '35646', name: 'Jack Johnson' },
-        lastMessage: 'Ok brow, let`s play this song',
-      },
-    ]);
-  }, []);
+    (async () => {
+      const chatsCollection = await firestore()
+        .collection('Chats')
+        .where('users', 'array-contains', user.id)
+        .get();
+
+      const chatsArray = chatsCollection.docs.map(async doc => {
+        const chat: Chat = {
+          id: doc.id,
+          otherUser: { id: '', name: '' },
+          lastMessage: '',
+        };
+
+        const id = doc
+          .data()
+          .users.find((userId: string) => userId !== user.id);
+
+        const otherUserPromise = firestore()
+          .collection('Users')
+          .doc(id)
+          .get()
+          .then(otherUserDoc => {
+            chat.otherUser = { id, name: otherUserDoc.data()?.name };
+          });
+
+        const lastMessagePromise = doc.ref
+          .collection('Messages')
+          .orderBy('dateTime', 'desc')
+          .limit(1)
+          .get()
+          .then(messagesCollection => {
+            chat.lastMessage = messagesCollection.docs.pop()?.data().text;
+          });
+
+        await Promise.all([otherUserPromise, lastMessagePromise]);
+
+        return chat;
+      });
+
+      const teste = await Promise.all(chatsArray);
+
+      setChats(teste);
+    })();
+  }, [user]);
 
   const navigateToDetail = useCallback(
     (chat: Chat) => {
-      navigate('ChatMessages', { otherUserId: chat.to.id });
+      navigate('ChatMessages', {
+        otherUserId: chat.otherUser.id,
+        otherUserName: chat.otherUser.name,
+      });
     },
     [navigate],
   );
@@ -61,11 +94,11 @@ const ChatsList: React.FC = () => {
       ) : (
         <ChatsListView
           data={chats}
-          keyExtractor={chat => chat.to.id}
+          keyExtractor={chat => chat.otherUser.id}
           renderItem={({ item: chat }) => (
             <ChatContainer>
               <ChatButton onPress={() => navigateToDetail(chat)}>
-                <ChatDestinationUser>{chat.to.name}</ChatDestinationUser>
+                <ChatDestinationUser>{chat.otherUser.name}</ChatDestinationUser>
                 <ChatLastMessage>{chat.lastMessage}</ChatLastMessage>
               </ChatButton>
             </ChatContainer>

@@ -20,21 +20,25 @@ interface ChatMessagesProps {
 
 interface ChatMessagesRouteParams {
   otherUserId: string;
+  otherUserName: string;
 }
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
   const route = useRoute();
-  const { otherUserId } = route.params as ChatMessagesRouteParams;
+  const {
+    otherUserId,
+    otherUserName,
+  } = route.params as ChatMessagesRouteParams;
 
   useEffect(
     () =>
       navigation.setOptions({
-        headerTitle: () => <Header>O nome da pessoa</Header>,
+        headerTitle: () => <Header>{otherUserName}</Header>,
         headerBackTitleVisible: false,
       }),
-    [navigation],
+    [navigation, otherUserName],
   );
 
   useEffect(() => {

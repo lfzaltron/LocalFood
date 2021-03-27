@@ -23,8 +23,8 @@ const ListMessages: React.FC<ListMessagesProps> = ({
       data={messages}
       keyExtractor={message => message.id}
       renderItem={({ item: message }) => (
-        <MessageContainer sent={currentUserId === message.from.id}>
-          <MessageTextContainer sent={currentUserId === message.from.id}>
+        <MessageContainer sent={currentUserId === message.from}>
+          <MessageTextContainer sent={currentUserId === message.from}>
             <MessageText>{message.text}</MessageText>
           </MessageTextContainer>
         </MessageContainer>
