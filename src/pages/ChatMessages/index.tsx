@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Feather';
@@ -28,6 +28,7 @@ interface ChatMessagesRouteParams {
 }
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
+  const [currentMessage, setCurrentMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
   const route = useRoute();
@@ -65,14 +66,24 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
     firestore()
       .collection('Chats')
       .doc(chatId)
-      .get()
-      .then(snapshot => {
-        snapshot.ref
-          .collection('Messages')
-          .orderBy('dateTime')
-          .onSnapshot(onMessagesChange);
-      });
-  }, [otherUserId, user]);
+      .collection('Messages')
+      .orderBy('dateTime')
+      .onSnapshot(onMessagesChange);
+  }, [chatId, onMessagesChange, otherUserId, user]);
+
+  const handleSend = useCallback(() => {
+    firestore()
+      .collection('Chats')
+      .doc(chatId)
+      .collection('Messages')
+      .add({
+        from: user.id,
+        to: otherUserId,
+        text: currentMessage,
+        dateTime: new Date(),
+      })
+      .then(() => setCurrentMessage(''));
+  }, [chatId, currentMessage, otherUserId, user]);
 
   return (
     <KeyboardAvoidingView
@@ -83,8 +94,14 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
     >
       <ListMessages currentUserId={user.id} messages={messages} />
       <InputContainer>
-        <MessageTextInput multiline autoCorrect autoCapitalize="sentences" />
-        <SendButton>
+        <MessageTextInput
+          multiline
+          autoCorrect
+          autoCapitalize="sentences"
+          value={currentMessage}
+          onChangeText={setCurrentMessage}
+        />
+        <SendButton onPress={handleSend}>
           <Icon name="send" size={20} color={DARK_TEXT_COLOR} />
         </SendButton>
       </InputContainer>
