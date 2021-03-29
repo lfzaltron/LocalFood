@@ -2,6 +2,8 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import Profile from '../pages/Profile';
+import Seller from '../pages/Seller';
+
 import Header from '../components/Header';
 import {
   BACKGROUND_COLOR,
@@ -21,6 +23,14 @@ const ProfileRoutes: React.FC = () => (
     }}
   >
     <ProfileStack.Screen name="Profile" component={Profile} />
+    <ProfileStack.Screen
+      name="MyAds"
+      component={Seller}
+      options={{
+        headerBackTitleVisible: false,
+        headerTitle: () => <Header>Vendedor</Header>,
+      }}
+    />
   </ProfileStack.Navigator>
 );
 

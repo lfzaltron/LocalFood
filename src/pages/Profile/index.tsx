@@ -9,6 +9,7 @@ import {
 import Icon from 'react-native-vector-icons/Feather';
 import { Form } from '@unform/mobile';
 import { FormHandles } from '@unform/core';
+import { useNavigation } from '@react-navigation/native';
 
 import Button from '../../components/Button';
 import Input from '../../components/Input';
@@ -37,6 +38,7 @@ interface UserFormData {
 }
 
 const Profile: React.FC = () => {
+  const { navigate } = useNavigation();
   const formRef = useRef<FormHandles>(null);
   const nameInputRef = useRef<TextInput>(null);
   const [saving, setSaving] = useState(false);
@@ -123,6 +125,10 @@ const Profile: React.FC = () => {
                 enabled={!saving}
               >
                 {saving ? 'Aguarde...' : 'Salvar alterações'}
+              </Button>
+
+              <Button onPress={() => navigate('MyAds', { userId: user.id })}>
+                Meus anúncios
               </Button>
               <SignOutButton onPress={signOut}>
                 <SignOutText>Sair</SignOutText>
