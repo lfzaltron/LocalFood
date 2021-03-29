@@ -7,6 +7,7 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 
+import { sendMessage } from '../../services/chat';
 import { useAuth } from '../../hooks/auth';
 import ListMessages from '../../components/ListMessages';
 import Header from '../../components/Header';
@@ -63,26 +64,22 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
   );
 
   useEffect(() => {
-    firestore()
+    const subscriber = firestore()
       .collection('Chats')
       .doc(chatId)
       .collection('Messages')
       .orderBy('dateTime')
-      .onSnapshot(onMessagesChange);
+      .onSnapshot(onMessagesChange, () => {});
+    return () => subscriber();
   }, [chatId, onMessagesChange, otherUserId, user]);
 
   const handleSend = useCallback(() => {
-    firestore()
-      .collection('Chats')
-      .doc(chatId)
-      .collection('Messages')
-      .add({
-        from: user.id,
-        to: otherUserId,
-        text: currentMessage,
-        dateTime: new Date(),
-      })
-      .then(() => setCurrentMessage(''));
+    sendMessage({
+      chatId,
+      fromId: user.id,
+      toId: otherUserId,
+      text: currentMessage,
+    }).then(() => setCurrentMessage(''));
   }, [chatId, currentMessage, otherUserId, user]);
 
   return (

@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {
+  FirebaseFirestoreTypes,
+} from '@react-native-firebase/firestore';
 
 import { useAuth } from '../../hooks/auth';
 import { NORMAL_TEXT_COLOR } from '../../constants';
@@ -21,6 +23,7 @@ export interface Chat {
   id: string;
   otherUser: { id: string; name: string };
   lastMessage: string;
+  lastMessageDate: Date;
 }
 
 const ChatsList: React.FC = () => {
@@ -28,20 +31,23 @@ const ChatsList: React.FC = () => {
   const { navigate } = useNavigation();
   const { user } = useAuth();
 
+  const route = useRoute();
   useEffect(() => {
-    (async () => {
-      // TODO: Adicionar um activity indicator
-      // TODO: SetLoading(true);
-      const chatsCollection = await firestore()
-        .collection('Chats')
-        .where('users', 'array-contains', user.id)
-        .get();
+    if (route.params !== undefined) navigate('ChatMessages', route.params);
+  }, [route.params, navigate]);
 
-      const chatsArray = chatsCollection.docs.map(async doc => {
+  const onChatsChange = useCallback(
+    async (snapshot: FirebaseFirestoreTypes.QuerySnapshot) => {
+      const chatsArray = snapshot.docs.map(async doc => {
+        let lastMessageDate = new Date();
+        try {
+          lastMessageDate = doc.data().lastMessage.toDate();
+        } catch {}
         const chat: Chat = {
           id: doc.id,
           otherUser: { id: '', name: '' },
           lastMessage: '',
+          lastMessageDate,
         };
 
         const id = doc
@@ -70,12 +76,23 @@ const ChatsList: React.FC = () => {
         return chat;
       });
 
-      const teste = await Promise.all(chatsArray);
+      const unorderedChats = await Promise.all(chatsArray);
+      setChats(
+        unorderedChats.sort(
+          (a, b) => b.lastMessageDate.getTime() - a.lastMessageDate.getTime(),
+        ),
+      );
+    },
+    [user.id],
+  );
 
-      setChats(teste);
-      // TODO: setLoading(false);
-    })();
-  }, [user]);
+  useEffect(() => {
+    const subscriber = firestore()
+      .collection('Chats')
+      .where('users', 'array-contains', user.id)
+      .onSnapshot(onChatsChange, () => {});
+    return () => subscriber();
+  }, [onChatsChange, user]);
 
   const navigateToDetail = useCallback(
     (chat: Chat) => {

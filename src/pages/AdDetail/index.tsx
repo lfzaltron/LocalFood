@@ -2,8 +2,9 @@ import React, { useEffect, useCallback } from 'react';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Feather';
-
 import { ScrollView } from 'react-native-gesture-handler';
+
+import { getChatId, sendMessage } from '../../services/chat';
 import { DARK_TEXT_COLOR } from '../../constants';
 import Ad from '../../types/Ad';
 import Header from '../../components/Header';
@@ -23,6 +24,7 @@ import {
   SectionTitle,
   SellerName,
 } from './styles';
+import { useAuth } from '../../hooks/auth';
 
 interface AdDetailProps {
   navigation: {
@@ -31,6 +33,7 @@ interface AdDetailProps {
 }
 
 const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
+  const { user } = useAuth();
   const { navigate } = useNavigation();
   const route = useRoute();
   const ad = route.params as Ad;
@@ -47,6 +50,27 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
   const handleSellerButtonPress = useCallback(() => {
     navigate('Seller', { userId: ad.user.id });
   }, [ad.user.id, navigate]);
+
+  const handleContactSeller = useCallback(async () => {
+    // TODO: Tratar usuário ainda nao logado...
+    const chatId = await getChatId({ fromId: user.id, toId: ad.user.id });
+
+    sendMessage({
+      chatId,
+      fromId: user.id,
+      toId: ad.user.id,
+      text: `Olá, estou interessado no seu anúncio de ${ad.title}`,
+    });
+
+    navigate('Chats', {
+      screen: 'ChatsList',
+      params: {
+        chatId,
+        otherUserId: ad.user.id,
+        otherUserName: ad.user.name,
+      },
+    });
+  }, [navigate, ad, user]);
 
   return (
     <Container>
@@ -82,8 +106,8 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
           </SellerContainer>
         </DataContainer>
       </ScrollView>
-      <BuyButton onPress={() => console.log('Comprouuu!!')}>
-        <BuyButtonText>Comprar</BuyButtonText>
+      <BuyButton onPress={handleContactSeller}>
+        <BuyButtonText>Entrar em contato</BuyButtonText>
       </BuyButton>
     </Container>
   );
