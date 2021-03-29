@@ -57,3 +57,14 @@ export const UpdateLocationText = styled.Text`
   font-size: 18px;
   margin-left: 16px;
 `;
+
+export const SignOutButton = styled.TouchableOpacity`
+  margin-top: 24px;
+  align-items: center;
+`;
+
+export const SignOutText = styled.Text`
+  font-size: 18px;
+  color: ${HIGHLIGHT_COLOR};
+  font-family: 'RobotoSlab-Regular';
+`;

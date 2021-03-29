@@ -24,6 +24,8 @@ import {
   ContentContainer,
   UpdateLocationButton,
   UpdateLocationText,
+  SignOutButton,
+  SignOutText,
 } from './styles';
 import { useGeolocation } from '../../hooks/geolocation';
 
@@ -122,6 +124,9 @@ const Profile: React.FC = () => {
               >
                 {saving ? 'Aguarde...' : 'Salvar alterações'}
               </Button>
+              <SignOutButton onPress={signOut}>
+                <SignOutText>Sair</SignOutText>
+              </SignOutButton>
             </Form>
           </ContentContainer>
         </Container>
