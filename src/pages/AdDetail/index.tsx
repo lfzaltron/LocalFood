@@ -52,7 +52,10 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
   }, [ad.user.id, navigate]);
 
   const handleContactSeller = useCallback(async () => {
-    // TODO: Tratar usuário ainda nao logado...
+    if (!user) {
+      navigate('Profile');
+    }
+
     const chatId = await getChatId({ fromId: user.id, toId: ad.user.id });
 
     sendMessage({
