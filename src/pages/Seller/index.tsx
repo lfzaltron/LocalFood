@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRoute } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 import Icon from 'react-native-vector-icons/Feather';
@@ -26,6 +26,7 @@ interface SellerData {
 }
 
 const Seller: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [seller, setSeller] = useState<SellerData>({} as SellerData);
   const [ads, setAds] = useState<Ad[]>([]);
   const route = useRoute();
@@ -41,35 +42,37 @@ const Seller: React.FC = () => {
       });
   }, [userId]);
 
+  const loadAds = useCallback(async () => {
+    const adsCollection = await firestore()
+      .collection('Ads')
+      .where('userId', '==', userId)
+      .get();
+
+    const stubAds: Ad[] = [];
+    for (let i = 0; i < adsCollection.docs.length; i += 1) {
+      const doc = adsCollection.docs[i];
+
+      const currentAd = {
+        id: doc.id,
+        title: doc.data().title,
+        tags: doc.data().tags,
+        price: parseFloat(doc.data().price),
+        imageUrl: doc.data().imageUrl,
+        description: doc.data().description,
+        user: {
+          id: doc.data().userId,
+          name: seller.name,
+        },
+      };
+
+      stubAds.push(currentAd);
+    }
+    setAds(stubAds);
+  }, [seller.name, userId]);
+
   useEffect(() => {
-    (async () => {
-      const adsCollection = await firestore()
-        .collection('Ads')
-        .where('userId', '==', userId)
-        .get();
-
-      const stubAds: Ad[] = [];
-      for (let i = 0; i < adsCollection.docs.length; i += 1) {
-        const doc = adsCollection.docs[i];
-
-        const currentAd = {
-          id: doc.id,
-          title: doc.data().title,
-          tags: doc.data().tags,
-          price: parseFloat(doc.data().price),
-          imageUrl: doc.data().imageUrl,
-          description: doc.data().description,
-          user: {
-            id: doc.data().userId,
-            name: seller.name,
-          },
-        };
-
-        stubAds.push(currentAd);
-      }
-      setAds(stubAds);
-    })();
-  }, [seller, userId]);
+    loadAds();
+  }, [loadAds]);
 
   return (
     <Container>
@@ -85,7 +88,7 @@ const Seller: React.FC = () => {
           <Icon name="user" size={50} color={HIGHLIGHT_COLOR} />
         </Avatar>
       </SellerDataContainer>
-      <ListAds ads={ads} />
+      <ListAds ads={ads} refreshing={loading} onRefresh={loadAds} />
     </Container>
   );
 };

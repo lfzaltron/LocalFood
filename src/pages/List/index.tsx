@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Icon from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
@@ -16,50 +16,56 @@ import { DARK_TEXT_COLOR } from '../../constants';
 import ListAds from '../../components/ListAds';
 
 const List: React.FC = () => {
+  const [loading, setLoading] = useState(false);
   const [ads, setAds] = useState<Ad[]>([]);
   const [search, setSearch] = useState('');
   const { navigate } = useNavigation();
 
-  useEffect(() => {
-    (async () => {
-      const adsCollection = await firestore()
-        .collection('Ads')
-        // .where('title', 'in', ['Pizza congelada'])
-        .get();
+  const loadAds = useCallback(async () => {
+    setLoading(true);
 
-      const stubAds: Ad[] = [];
-      const searchUpper = search.toUpperCase();
-      for (let i = 0; i < adsCollection.docs.length; i += 1) {
-        const doc = adsCollection.docs[i];
-        const title = doc.data().title.toUpperCase();
+    const adsCollection = await firestore()
+      .collection('Ads')
+      // .where('title', 'in', ['Pizza congelada'])
+      .get();
 
-        const currentAd = {
-          id: doc.id,
-          title: doc.data().title,
-          tags: doc.data().tags,
-          price: parseFloat(doc.data().price),
-          imageUrl: doc.data().imageUrl,
-          description: doc.data().description,
-          user: {
-            id: doc.data().userId,
-            name: '',
-          },
-        };
+    const stubAds: Ad[] = [];
+    const searchUpper = search.toUpperCase();
+    for (let i = 0; i < adsCollection.docs.length; i += 1) {
+      const doc = adsCollection.docs[i];
+      const title = doc.data().title.toUpperCase();
 
-        if (title.includes(searchUpper)) {
-          firestore()
-            .collection('Users')
-            .doc(currentAd.user.id)
-            .get()
-            .then(userData => {
-              currentAd.user.name = userData.data()?.name;
-            });
-          stubAds.push(currentAd);
-        }
+      const currentAd = {
+        id: doc.id,
+        title: doc.data().title,
+        tags: doc.data().tags,
+        price: parseFloat(doc.data().price),
+        imageUrl: doc.data().imageUrl,
+        description: doc.data().description,
+        user: {
+          id: doc.data().userId,
+          name: '',
+        },
+      };
+
+      if (title.includes(searchUpper)) {
+        firestore()
+          .collection('Users')
+          .doc(currentAd.user.id)
+          .get()
+          .then(userData => {
+            currentAd.user.name = userData.data()?.name;
+          });
+        stubAds.push(currentAd);
       }
-      setAds(stubAds);
-    })();
+    }
+    setAds(stubAds);
+    setLoading(false);
   }, [search]);
+
+  useEffect(() => {
+    loadAds();
+  }, [loadAds]);
 
   return (
     <Container>
@@ -75,7 +81,7 @@ const List: React.FC = () => {
           <Icon name="filter" size={28} color={DARK_TEXT_COLOR} />
         </FilterButton>
       </TopBar>
-      <ListAds ads={ads} />
+      <ListAds ads={ads} onRefresh={loadAds} refreshing={loading} />
     </Container>
   );
 };

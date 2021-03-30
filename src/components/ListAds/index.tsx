@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Feather';
+import { RefreshControl } from 'react-native';
 
 import Ad from '../../types/Ad';
 import { DARK_TEXT_COLOR } from '../../constants';
@@ -17,9 +18,11 @@ import {
 
 interface ListAdsProps {
   ads: Ad[];
+  refreshing: boolean;
+  onRefresh(): void;
 }
 
-const ListAds: React.FC<ListAdsProps> = ({ ads }) => {
+const ListAds: React.FC<ListAdsProps> = ({ ads, refreshing, onRefresh }) => {
   const { navigate } = useNavigation();
 
   const navigateToDetail = useCallback(
@@ -32,6 +35,9 @@ const ListAds: React.FC<ListAdsProps> = ({ ads }) => {
   return (
     <AdList
       data={ads}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       keyExtractor={ad => ad.id}
       renderItem={({ item: ad }) => (
         <AdContainer onPress={() => navigateToDetail(ad)}>
