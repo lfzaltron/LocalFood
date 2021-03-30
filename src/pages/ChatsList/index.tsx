@@ -5,6 +5,7 @@ import firestore, {
   FirebaseFirestoreTypes,
 } from '@react-native-firebase/firestore';
 
+import { RefreshControl } from 'react-native';
 import { useAuth } from '../../hooks/auth';
 import { NORMAL_TEXT_COLOR } from '../../constants';
 
@@ -27,6 +28,7 @@ export interface Chat {
 }
 
 const ChatsList: React.FC = () => {
+  const [loading, setLoading] = useState(true);
   const [chats, setChats] = useState<Chat[]>([]);
   const { navigate } = useNavigation();
   const { user } = useAuth();
@@ -38,6 +40,7 @@ const ChatsList: React.FC = () => {
 
   const onChatsChange = useCallback(
     async (snapshot: FirebaseFirestoreTypes.QuerySnapshot) => {
+      setLoading(true);
       const chatsArray = snapshot.docs.map(async doc => {
         let lastMessageDate = new Date();
         try {
@@ -77,22 +80,28 @@ const ChatsList: React.FC = () => {
       });
 
       const unorderedChats = await Promise.all(chatsArray);
+
       setChats(
         unorderedChats.sort(
           (a, b) => b.lastMessageDate.getTime() - a.lastMessageDate.getTime(),
         ),
       );
+      setLoading(false);
     },
     [user.id],
   );
 
-  useEffect(() => {
+  const loadChats = useCallback(() => {
     const subscriber = firestore()
       .collection('Chats')
       .where('users', 'array-contains', user.id)
       .onSnapshot(onChatsChange, () => {});
     return () => subscriber();
-  }, [onChatsChange, user]);
+  }, [onChatsChange, user.id]);
+
+  useEffect(() => {
+    return loadChats();
+  }, [loadChats]);
 
   const navigateToDetail = useCallback(
     (chat: Chat) => {
@@ -107,13 +116,16 @@ const ChatsList: React.FC = () => {
 
   return (
     <Container>
-      {chats.length === 0 ? (
+      {chats.length === 0 && !loading ? (
         <NoChatsContainer>
           <Icon name="frown" size={150} color={NORMAL_TEXT_COLOR} />
           <NoChatsText>Parece que você ainda não tem conversas!</NoChatsText>
         </NoChatsContainer>
       ) : (
         <ChatsListView
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={loadChats} />
+          }
           data={chats}
           keyExtractor={chat => chat.id}
           renderItem={({ item: chat }) => (
