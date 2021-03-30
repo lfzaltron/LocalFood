@@ -14,6 +14,14 @@ export const Container = styled.View`
   padding-bottom: 40px;
 `;
 
+export const DeleteButton = styled.TouchableOpacity`
+  height: 24px;
+  width: 24px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+`;
+
 export const AdImage = styled.Image`
   height: 250px;
 `;

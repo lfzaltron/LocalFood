@@ -3,11 +3,14 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Feather';
 import { ScrollView } from 'react-native-gesture-handler';
+import firestore from '@react-native-firebase/firestore';
+import { Alert } from 'react-native';
 
 import { getChatId, sendMessage } from '../../services/chat';
 import { DARK_TEXT_COLOR } from '../../constants';
 import Ad from '../../types/Ad';
 import Header from '../../components/Header';
+import { useAuth } from '../../hooks/auth';
 
 import {
   Container,
@@ -23,8 +26,8 @@ import {
   SellerContainer,
   SectionTitle,
   SellerName,
+  DeleteButton,
 } from './styles';
-import { useAuth } from '../../hooks/auth';
 
 interface AdDetailProps {
   navigation: {
@@ -34,17 +37,43 @@ interface AdDetailProps {
 
 const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
   const { user } = useAuth();
-  const { navigate } = useNavigation();
+  const { navigate, goBack } = useNavigation();
   const route = useRoute();
   const ad = route.params as Ad;
+
+  const handleDelete = useCallback(() => {
+    if (user.id === ad.user.id) {
+      Alert.alert('Excluir', 'Deseja excluir esse anúncio?', [
+        {
+          text: 'Sim',
+          onPress: () => {
+            firestore().collection('Ads').doc(ad.id).delete();
+            goBack();
+          },
+        },
+        {
+          text: 'Não',
+        },
+      ]);
+    }
+  }, [ad.id, ad.user.id, goBack, user.id]);
 
   useEffect(
     () =>
       navigation.setOptions({
         headerTitle: () => <Header>{ad.title}</Header>,
         headerBackTitleVisible: false,
+        headerRight: () => {
+          if (user.id === ad.user.id)
+            return (
+              <DeleteButton onPress={handleDelete}>
+                <Icon name="trash-2" size={24} color={DARK_TEXT_COLOR} />
+              </DeleteButton>
+            );
+          return <></>;
+        },
       }),
-    [navigation, ad],
+    [navigation, ad, user.id, handleDelete],
   );
 
   const handleSellerButtonPress = useCallback(() => {
