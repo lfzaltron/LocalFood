@@ -24,6 +24,7 @@ interface AuthData {
 }
 
 interface SignUpCredentials {
+  name: string;
   email: string;
   password: string;
 }
@@ -85,10 +86,13 @@ const AuthProvider: React.FC = ({ children }) => {
     });
   }, [getUserData]);
 
-  const signUp = useCallback(async ({ email, password }) => {
+  const signUp = useCallback(async ({ email, password, name }) => {
     await auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => console.log('User signed up!'))
+      .then(result => {
+        const id = result.user.uid;
+        firestore().collection('Users').doc(id).set({ name });
+      })
       .catch(error => {
         if (error.code === 'auth/email-already-in-use')
           throw new Error('Email já cadastrado.');
