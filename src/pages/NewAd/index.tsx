@@ -83,6 +83,23 @@ const NewAd: React.FC = () => {
     [image.uri.length],
   );
 
+  const fetchTags = useCallback(async () => {
+    const tagsCollection = await firestore().collection('Tags').get();
+
+    setTags(
+      tagsCollection.docs.map(item => ({
+        checked: false,
+        tag: { title: item.id },
+      })),
+    );
+  }, []);
+
+  const cleanContent = useCallback(() => {
+    setImage({ uri: '', fileName: '' });
+    fetchTags();
+    formRef.current?.reset();
+  }, [fetchTags]);
+
   const handleSave = useCallback(
     async (data: AdFormContent) => {
       if (!fieldsFilled(data)) {
@@ -107,10 +124,12 @@ const NewAd: React.FC = () => {
         })
         .then(() => {
           setLoading(false);
+          cleanContent();
           navigate('List');
         });
     },
     [
+      cleanContent,
       fieldsFilled,
       navigate,
       tags,
@@ -170,17 +189,8 @@ const NewAd: React.FC = () => {
   }, [uploadSelectedImage]);
 
   useEffect(() => {
-    (async () => {
-      const tagsCollection = await firestore().collection('Tags').get();
-
-      setTags(
-        tagsCollection.docs.map(item => ({
-          checked: false,
-          tag: { title: item.id },
-        })),
-      );
-    })();
-  }, []);
+    fetchTags();
+  }, [fetchTags]);
 
   return (
     <KeyboardAvoidingView
