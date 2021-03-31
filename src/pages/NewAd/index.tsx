@@ -71,8 +71,24 @@ const NewAd: React.FC = () => {
     return reference.getDownloadURL();
   }, [image]);
 
+  const fieldsFilled = useCallback(
+    (data: AdFormContent) => {
+      return (
+        image.uri.length > 0 &&
+        data.title.length > 0 &&
+        data.description.length > 0 &&
+        data.price > 0
+      );
+    },
+    [image.uri.length],
+  );
+
   const handleSave = useCallback(
     async (data: AdFormContent) => {
+      if (!fieldsFilled(data)) {
+        Alert.alert('Erro', 'Todos os campos devem ser preenchidos');
+        return;
+      }
       setLoading(true);
       const imageUrl = await uploadImage();
       const selectedTags = tags
@@ -94,7 +110,15 @@ const NewAd: React.FC = () => {
           navigate('List');
         });
     },
-    [navigate, tags, uploadImage, user],
+    [
+      fieldsFilled,
+      navigate,
+      tags,
+      uploadImage,
+      user.id,
+      user.latitude,
+      user.longitude,
+    ],
   );
 
   const uploadSelectedImage = useCallback((response: ImagePickerResponse) => {
