@@ -7,7 +7,7 @@ export const Container = styled.View`
 `;
 
 export const Section = styled.Text`
-  font-family: 'RobotoSlab-Regular';
+  font-family: 'RobotoSlab-Medium';
   font-size: 18px;
   color: ${DARK_TEXT_COLOR};
   padding-top: 20px;

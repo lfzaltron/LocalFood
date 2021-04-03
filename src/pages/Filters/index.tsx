@@ -2,17 +2,24 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import SwitchSelector from 'react-native-switch-selector';
 import firestore from '@react-native-firebase/firestore';
+import { Slider } from 'react-native-elements';
 
 import Button from '../../components/Button';
 import ListTags from '../../components/ListTags';
 import { useGeolocation } from '../../hooks/geolocation';
 import { TagItem } from '../../types/Tag';
 
-import { DARK_TEXT_COLOR, LIGHT_HIGHLIGHT_COLOR } from '../../constants';
+import {
+  DARK_TEXT_COLOR,
+  HIGHLIGHT_COLOR,
+  LIGHT_HIGHLIGHT_COLOR,
+  NORMAL_TEXT_COLOR,
+} from '../../constants';
 
 import { Container, Label, Section } from './styles';
 
 const Filters: React.FC = () => {
+  const [distance, setDistance] = useState(1);
   const [tags, setTags] = useState<TagItem[]>([]);
   const [location, setLocation] = useState({
     latitude: 0,
@@ -83,7 +90,18 @@ const Filters: React.FC = () => {
         borderColor={LIGHT_HIGHLIGHT_COLOR}
       />
       <Section>Filtros</Section>
-      <Label>Distância</Label>
+      <Label>{`Distância: até ${distance} kilômetros`}</Label>
+      <Slider
+        value={distance}
+        maximumValue={100}
+        minimumValue={1}
+        step={1}
+        onValueChange={setDistance}
+        minimumTrackTintColor={HIGHLIGHT_COLOR}
+        maximumTrackTintColor={NORMAL_TEXT_COLOR}
+        thumbTintColor={HIGHLIGHT_COLOR}
+        thumbStyle={{ height: 30, width: 30 }}
+      />
 
       <Label>Tags</Label>
       <ListTags tags={tags} onSelect={selectTag} />
