@@ -1,19 +1,7 @@
 import styled from 'styled-components/native';
-import { FlatList } from 'react-native';
 import { Form as Unform } from '@unform/mobile';
 
-import { TagItem } from '.';
-
-import {
-  NORMAL_TEXT_COLOR,
-  BACKGROUND_COLOR,
-  LIGHT_HIGHLIGHT_COLOR,
-  DARK_TEXT_COLOR,
-} from '../../constants';
-
-interface TagTextProps {
-  checked: boolean;
-}
+import { NORMAL_TEXT_COLOR, BACKGROUND_COLOR } from '../../constants';
 
 export const Container = styled.View`
   flex: 1;
@@ -36,7 +24,7 @@ export const AddImageContainer = styled.View`
   border-style: dashed;
   border-width: 2px;
   border-color: ${NORMAL_TEXT_COLOR};
-  margin: 10px 10px 0;
+  margin: 20px 20px 10px;
 `;
 
 export const AddImageText = styled.Text`
@@ -46,7 +34,7 @@ export const AddImageText = styled.Text`
 `;
 
 export const Form = styled(Unform)`
-  margin: 0 8px;
+  margin: 0 20px;
 `;
 
 export const Loading = styled.ActivityIndicator`
@@ -59,31 +47,4 @@ export const Loading = styled.ActivityIndicator`
   z-index: 1;
   background-color: ${BACKGROUND_COLOR};
   opacity: 0.8;
-`;
-
-export const ListContainer = styled.View`
-  width: 100%;
-  height: 160px;
-  padding: 16px 16px;
-  background: ${LIGHT_HIGHLIGHT_COLOR};
-  border-radius: 10px;
-  margin-bottom: 8px;
-  flex-direction: row;
-  align-items: center;
-  border-width: 2px;
-  border-color: ${LIGHT_HIGHLIGHT_COLOR};
-`;
-
-export const TagList = styled(FlatList as new () => FlatList<TagItem>)``;
-
-export const TagContainer = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 5px 10px;
-`;
-
-export const TagText = styled.Text<TagTextProps>`
-  font-family: 'RobotoSlab-Regular';
-  font-size: 16px;
-  color: ${props => (props.checked ? DARK_TEXT_COLOR : NORMAL_TEXT_COLOR)};
 `;

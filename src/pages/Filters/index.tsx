@@ -1,12 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Text } from 'react-native';
+import SwitchSelector from 'react-native-switch-selector';
+import firestore from '@react-native-firebase/firestore';
 
 import Button from '../../components/Button';
+import ListTags from '../../components/ListTags';
 import { useGeolocation } from '../../hooks/geolocation';
+import { TagItem } from '../../types/Tag';
 
-import { Container } from './styles';
+import { DARK_TEXT_COLOR, LIGHT_HIGHLIGHT_COLOR } from '../../constants';
+
+import { Container, Label, Section } from './styles';
 
 const Filters: React.FC = () => {
+  const [tags, setTags] = useState<TagItem[]>([]);
   const [location, setLocation] = useState({
     latitude: 0,
     longitude: 0,
@@ -30,9 +37,57 @@ const Filters: React.FC = () => {
     setLocation({ ...currentPosition, distancia: distancia || 0 });
   }, [currentPosition, getDistanceToCurrentPosition]);
 
+  const fetchTags = useCallback(async () => {
+    const tagsCollection = await firestore().collection('Tags').get();
+
+    setTags(
+      tagsCollection.docs.map(item => ({
+        checked: false,
+        tag: { title: item.id },
+      })),
+    );
+  }, []);
+
+  useEffect(() => {
+    fetchTags();
+  }, [fetchTags]);
+
+  const selectTag = useCallback(
+    (tag: TagItem) => {
+      setTags(
+        tags.map(item => {
+          // eslint-disable-next-line no-param-reassign
+          if (item.tag === tag.tag) item.checked = !item.checked;
+          return item;
+        }),
+      );
+    },
+    [tags],
+  );
+
+  const options = [
+    { label: 'Data', value: 'date' },
+    { label: 'Distância', value: 'distance' },
+  ];
+
   return (
     <Container>
-      <Text>Selecionar os filtros...</Text>
+      <Section>Ordenar por</Section>
+      <SwitchSelector
+        options={options}
+        initial={0}
+        onPress={value => console.log(`Call onPress with value: ${value}`)}
+        textColor={DARK_TEXT_COLOR} // '#7a44cf'
+        selectedColor={DARK_TEXT_COLOR}
+        buttonColor={LIGHT_HIGHLIGHT_COLOR}
+        borderColor={LIGHT_HIGHLIGHT_COLOR}
+      />
+      <Section>Filtros</Section>
+      <Label>Distância</Label>
+
+      <Label>Tags</Label>
+      <ListTags tags={tags} onSelect={selectTag} />
+      <Label>Preço</Label>
 
       <Button onPress={handleCurrentLocationPressed}>Localizar!</Button>
       <Text>

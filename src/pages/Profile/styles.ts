@@ -42,7 +42,7 @@ export const Avatar = styled.View`
 export const ContentContainer = styled.View`
   flex: 1;
   width: 100%;
-  padding: 40px 24px 20px;
+  padding: 40px 20px 20px;
   justify-content: space-between;
 `;
 

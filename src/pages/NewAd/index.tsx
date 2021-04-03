@@ -29,13 +29,10 @@ import {
   AddImageContainer,
   Form,
   Loading,
-  TagList,
-  TagContainer,
-  TagText,
-  ListContainer,
 } from './styles';
 import { HIGHLIGHT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
-import Tag from '../../types/Tag';
+import { TagItem } from '../../types/Tag';
+import ListTags from '../../components/ListTags';
 
 interface AdFormContent {
   title: string;
@@ -48,11 +45,6 @@ interface AdFormContent {
 interface ImageData {
   uri: string;
   fileName: string;
-}
-
-export interface TagItem {
-  tag: Tag;
-  checked: boolean;
 }
 
 const NewAd: React.FC = () => {
@@ -237,22 +229,7 @@ const NewAd: React.FC = () => {
               numberOfLines={5}
               textAlignVertical="top"
             />
-            <ListContainer>
-              <TagList
-                data={tags}
-                keyExtractor={item => item.tag.title}
-                renderItem={({ item }) => (
-                  <TagContainer onPress={() => selectTag(item)}>
-                    <TagText checked={item.checked}>{item.tag.title}</TagText>
-                    <Icon
-                      name={item.checked ? 'check-circle' : 'circle'}
-                      size={20}
-                      color={item.checked ? HIGHLIGHT_COLOR : NORMAL_TEXT_COLOR}
-                    />
-                  </TagContainer>
-                )}
-              />
-            </ListContainer>
+            <ListTags tags={tags} onSelect={selectTag} />
             <Input
               name="price"
               icon=""
