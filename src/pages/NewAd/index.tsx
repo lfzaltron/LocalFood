@@ -113,6 +113,7 @@ const NewAd: React.FC = () => {
           userId: user.id,
           latitude: user.latitude,
           longitude: user.longitude,
+          date: new Date(),
         })
         .then(() => {
           setLoading(false);

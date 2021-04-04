@@ -9,7 +9,7 @@ interface Position {
 interface GeolocationContextData {
   currentPosition: Position;
   updateCurrentPosition(): Promise<void>;
-  getDistanceToCurrentPosition(position: Position): number;
+  getDistance(position1: Position, position2: Position): number;
 }
 
 const GeolocationContext = createContext({} as GeolocationContextData);
@@ -19,23 +19,21 @@ const GeolocationProvider: React.FC = ({ children }) => {
     {} as Position,
   );
 
-  const getDistanceToCurrentPosition = useCallback(
-    (position: Position) => {
+  const getDistance = useCallback(
+    (position1: Position, position2: Position) => {
       const R = 6371e3; // metres
-      const φ1 = (position.latitude * Math.PI) / 180; // φ, λ in radians
-      const φ2 = (currentPosition.latitude * Math.PI) / 180;
-      const Δφ =
-        ((currentPosition.latitude - position.latitude) * Math.PI) / 180;
-      const Δλ =
-        ((currentPosition.longitude - position.longitude) * Math.PI) / 180;
+      const φ1 = (position2.latitude * Math.PI) / 180; // φ, λ in radians
+      const φ2 = (position1.latitude * Math.PI) / 180;
+      const Δφ = ((position1.latitude - position2.latitude) * Math.PI) / 180;
+      const Δλ = ((position1.longitude - position2.longitude) * Math.PI) / 180;
       const a =
         Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
         Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
       const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       const d = R * c; // in metres
-      return d;
+      return d / 1000; // in km
     },
-    [currentPosition],
+    [],
   );
 
   const updateCurrentPosition = useCallback(() => {
@@ -45,6 +43,7 @@ const GeolocationProvider: React.FC = ({ children }) => {
           Geolocation.getCurrentPosition(
             position => {
               const { latitude, longitude } = position.coords;
+              console.log({ latitude, longitude });
               setCurrentPosition({ latitude, longitude });
               resolve();
             },
@@ -71,7 +70,7 @@ const GeolocationProvider: React.FC = ({ children }) => {
       value={{
         currentPosition,
         updateCurrentPosition,
-        getDistanceToCurrentPosition,
+        getDistance,
       }}
     >
       {children}

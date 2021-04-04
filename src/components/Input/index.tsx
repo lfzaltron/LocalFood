@@ -68,13 +68,15 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
 
   return (
     <Container isFocused={isFocused} numberOfLines={numberOfLines}>
-      <Icon
-        name={icon}
-        size={20}
-        color={
-          isFocused || isFilled ? SMOOTH_HIGHLIGHT_COLOR : NORMAL_TEXT_COLOR
-        }
-      />
+      {icon !== '' && (
+        <Icon
+          name={icon}
+          size={20}
+          color={
+            isFocused || isFilled ? SMOOTH_HIGHLIGHT_COLOR : NORMAL_TEXT_COLOR
+          }
+        />
+      )}
       <TextInput
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}

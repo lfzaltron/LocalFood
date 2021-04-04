@@ -9,4 +9,7 @@ export default interface Ad {
     id: string;
     name: string;
   };
+  date: Date;
+  latitude: number;
+  longitude: number;
 }

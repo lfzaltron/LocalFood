@@ -1,13 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { Text } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import SwitchSelector from 'react-native-switch-selector';
 import firestore from '@react-native-firebase/firestore';
 import { Slider } from 'react-native-elements';
+import { FormHandles } from '@unform/core';
+import { Form } from '@unform/mobile';
 
+import { useNavigation } from '@react-navigation/native';
 import Button from '../../components/Button';
+import Input from '../../components/Input';
 import ListTags from '../../components/ListTags';
 import { useGeolocation } from '../../hooks/geolocation';
 import { TagItem } from '../../types/Tag';
+import { useFilter } from '../../hooks/filter';
 
 import {
   DARK_TEXT_COLOR,
@@ -18,36 +22,61 @@ import {
 
 import { Container, Label, Section } from './styles';
 
+interface PriceFormContent {
+  minPrice: number;
+  maxPrice: number;
+}
+
 const Filters: React.FC = () => {
-  const [distance, setDistance] = useState(1);
-  const [tags, setTags] = useState<TagItem[]>([]);
-  const [location, setLocation] = useState({
-    latitude: 0,
-    longitude: 0,
-    distancia: 0,
-  });
   const {
-    currentPosition,
-    getDistanceToCurrentPosition,
-    updateCurrentPosition,
-  } = useGeolocation();
+    order,
+    setOrder,
+    setPosition,
+    maxDistance,
+    setMaxDistance,
+    tags,
+    setTags,
+    minPrice,
+    setMinPrice,
+    maxPrice,
+    setMaxPrice,
+  } = useFilter();
+  const [orderBy, setOrderBy] = useState(order === 'date' ? 0 : 1);
+  const [distance, setDistance] = useState(maxDistance);
+  const [tagItems, setTagItems] = useState<TagItem[]>([]);
+  const formRef = useRef<FormHandles>(null);
+  const { currentPosition, updateCurrentPosition } = useGeolocation();
+  const { goBack } = useNavigation();
 
-  const handleCurrentLocationPressed = useCallback(async () => {
-    updateCurrentPosition();
-  }, [updateCurrentPosition]);
-
-  useEffect(() => {
-    const distancia = getDistanceToCurrentPosition({
-      latitude: -30.0429672,
-      longitude: -51.217359,
-    });
-    setLocation({ ...currentPosition, distancia: distancia || 0 });
-  }, [currentPosition, getDistanceToCurrentPosition]);
+  const handleDoFilterPressed = useCallback(
+    (data: PriceFormContent) => {
+      setOrder(orderBy === 0 ? 'date' : 'distance');
+      setPosition(currentPosition);
+      setMaxDistance(distance);
+      setTags(tagItems.filter(item => item.checked).map(item => item.tag));
+      setMinPrice(data.minPrice);
+      setMaxPrice(data.maxPrice);
+      goBack();
+    },
+    [
+      currentPosition,
+      distance,
+      goBack,
+      orderBy,
+      setMaxDistance,
+      setMaxPrice,
+      setMinPrice,
+      setOrder,
+      setPosition,
+      setTags,
+      tagItems,
+    ],
+  );
 
   const fetchTags = useCallback(async () => {
     const tagsCollection = await firestore().collection('Tags').get();
 
-    setTags(
+    setTagItems(
       tagsCollection.docs.map(item => ({
         checked: false,
         tag: { title: item.id },
@@ -57,24 +86,25 @@ const Filters: React.FC = () => {
 
   useEffect(() => {
     fetchTags();
-  }, [fetchTags]);
+    updateCurrentPosition();
+  }, [fetchTags, updateCurrentPosition]);
 
   const selectTag = useCallback(
     (tag: TagItem) => {
-      setTags(
-        tags.map(item => {
+      setTagItems(
+        tagItems.map(item => {
           // eslint-disable-next-line no-param-reassign
           if (item.tag === tag.tag) item.checked = !item.checked;
           return item;
         }),
       );
     },
-    [tags],
+    [tagItems],
   );
 
   const options = [
-    { label: 'Data', value: 'date' },
-    { label: 'Distância', value: 'distance' },
+    { label: 'Data', value: 0 },
+    { label: 'Distância', value: 1 },
   ];
 
   return (
@@ -82,15 +112,19 @@ const Filters: React.FC = () => {
       <Section>Ordenar por</Section>
       <SwitchSelector
         options={options}
-        initial={0}
-        onPress={value => console.log(`Call onPress with value: ${value}`)}
+        initial={orderBy}
+        onPress={v => setOrderBy(v as number)}
         textColor={DARK_TEXT_COLOR} // '#7a44cf'
         selectedColor={DARK_TEXT_COLOR}
         buttonColor={LIGHT_HIGHLIGHT_COLOR}
         borderColor={LIGHT_HIGHLIGHT_COLOR}
       />
       <Section>Filtros</Section>
-      <Label>{`Distância: até ${distance} kilômetros`}</Label>
+      <Label>
+        {distance && distance < 100
+          ? `Distância: até ${distance} kilômetros`
+          : 'Distância: qualquer'}
+      </Label>
       <Slider
         value={distance}
         maximumValue={100}
@@ -104,22 +138,38 @@ const Filters: React.FC = () => {
       />
 
       <Label>Tags</Label>
-      <ListTags tags={tags} onSelect={selectTag} />
-      <Label>Preço</Label>
-
-      <Button onPress={handleCurrentLocationPressed}>Localizar!</Button>
-      <Text>
-        Latitude:
-        {location.latitude}
-      </Text>
-      <Text>
-        Longitude:
-        {location.longitude}
-      </Text>
-      <Text>
-        Distancia:
-        {location.distancia}
-      </Text>
+      <ListTags tags={tagItems} onSelect={selectTag} />
+      <Label>Preço (R$)</Label>
+      <Form
+        ref={formRef}
+        onSubmit={handleDoFilterPressed}
+        initialData={{
+          minPrice: minPrice ? `${minPrice}` : '',
+          maxPrice: maxPrice ? `${maxPrice}` : '',
+        }}
+      >
+        <Input
+          name="minPrice"
+          icon=""
+          placeholder="Mínimo"
+          autoCorrect={false}
+          autoCapitalize="none"
+          keyboardType="decimal-pad"
+          returnKeyType="default"
+          onSubmitEditing={() => formRef.current?.submitForm()}
+        />
+        <Input
+          name="maxPrice"
+          icon=""
+          placeholder="Máximo"
+          autoCorrect={false}
+          autoCapitalize="none"
+          keyboardType="decimal-pad"
+          returnKeyType="default"
+          onSubmitEditing={() => formRef.current?.submitForm()}
+        />
+        <Button onPress={() => formRef.current?.submitForm()}>Filtrar</Button>
+      </Form>
     </Container>
   );
 };

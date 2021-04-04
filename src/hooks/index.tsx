@@ -1,11 +1,14 @@
 import React from 'react';
 
 import { AuthProvider } from './auth';
+import { FilterProvider } from './filter';
 import { GeolocationProvider } from './geolocation';
 
 const AppProvider: React.FC = ({ children }) => (
   <AuthProvider>
-    <GeolocationProvider>{children}</GeolocationProvider>
+    <GeolocationProvider>
+      <FilterProvider>{children}</FilterProvider>
+    </GeolocationProvider>
   </AuthProvider>
 );
 

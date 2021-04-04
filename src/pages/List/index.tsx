@@ -14,8 +14,10 @@ import {
 } from './styles';
 import { DARK_TEXT_COLOR } from '../../constants';
 import ListAds from '../../components/ListAds';
+import { useFilter } from '../../hooks/filter';
 
 const List: React.FC = () => {
+  const { filterFn, orderFn } = useFilter();
   const [loading, setLoading] = useState(false);
   const [ads, setAds] = useState<Ad[]>([]);
   const [search, setSearch] = useState('');
@@ -46,6 +48,9 @@ const List: React.FC = () => {
           id: doc.data().userId,
           name: '',
         },
+        date: doc.data().date.toDate(),
+        latitude: doc.data().latitude,
+        longitude: doc.data().longitude,
       };
 
       if (title.includes(searchUpper)) {
@@ -59,9 +64,10 @@ const List: React.FC = () => {
         stubAds.push(currentAd);
       }
     }
-    setAds(stubAds);
+
+    setAds(stubAds.filter(filterFn).sort(orderFn));
     setLoading(false);
-  }, [search]);
+  }, [search, filterFn, orderFn]);
 
   useEffect(() => {
     loadAds();
