@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { KeyboardAvoidingView, Platform } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { StackNavigationOptions } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/Feather';
 import firestore, {
@@ -13,7 +13,12 @@ import ListMessages from '../../components/ListMessages';
 import Header from '../../components/Header';
 import Message from '../../types/Message';
 
-import { InputContainer, MessageTextInput, SendButton } from './styles';
+import {
+  InputContainer,
+  MessageTextInput,
+  SendButton,
+  RateButton,
+} from './styles';
 import { DARK_TEXT_COLOR } from '../../constants';
 
 interface ChatMessagesProps {
@@ -33,19 +38,33 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({ navigation }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const { user } = useAuth();
   const route = useRoute();
+  const { navigate } = useNavigation();
   const {
     chatId,
     otherUserId,
     otherUserName,
   } = route.params as ChatMessagesRouteParams;
 
+  const rateContact = useCallback(() => {
+    navigate('Rate', {
+      id: otherUserId,
+      name: otherUserName,
+    });
+  }, [navigate, otherUserId, otherUserName]);
+
   useEffect(
     () =>
       navigation.setOptions({
         headerTitle: () => <Header>{otherUserName}</Header>,
-        headerBackTitleVisible: false,
+        headerRight: () => {
+          return (
+            <RateButton onPress={rateContact}>
+              <Icon name="star" size={24} color={DARK_TEXT_COLOR} />
+            </RateButton>
+          );
+        },
       }),
-    [navigation, otherUserName],
+    [navigation, otherUserName, rateContact],
   );
 
   const onMessagesChange = useCallback(

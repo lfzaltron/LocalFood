@@ -32,3 +32,11 @@ export const MessageTextInput = styled.TextInput`
 export const SendButton = styled.TouchableOpacity`
   padding: 0 20px;
 `;
+
+export const RateButton = styled.TouchableOpacity`
+  height: 24px;
+  width: 24px;
+  align-items: center;
+  justify-content: center;
+  margin-right: 18px;
+`;

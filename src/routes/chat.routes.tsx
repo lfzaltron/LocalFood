@@ -5,6 +5,7 @@ import Header from '../components/Header';
 
 import ChatsList from '../pages/ChatsList';
 import ChatMessages from '../pages/ChatMessages';
+import Rate from '../pages/Rate';
 
 import {
   BACKGROUND_COLOR,
@@ -21,6 +22,7 @@ const ChatRoutes: React.FC = () => (
       headerTintColor: DARK_TEXT_COLOR,
       headerStyle: { backgroundColor: LIGHT_HIGHLIGHT_COLOR },
       cardStyle: { backgroundColor: BACKGROUND_COLOR },
+      headerBackTitleVisible: false,
     }}
   >
     <Chat.Screen
@@ -32,6 +34,11 @@ const ChatRoutes: React.FC = () => (
       name="ChatMessages"
       component={ChatMessages}
       options={{ headerShown: true, title: '' }}
+    />
+    <Chat.Screen
+      name="Rate"
+      component={Rate}
+      options={{ headerShown: true, title: 'Avaliar' }}
     />
   </Chat.Navigator>
 );
