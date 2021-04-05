@@ -48,6 +48,17 @@ const Filters: React.FC = () => {
   const { currentPosition, updateCurrentPosition } = useGeolocation();
   const { goBack } = useNavigation();
 
+  const handleClearPress = useCallback(() => {
+    setDistance(100);
+    setTagItems(
+      tagItems.map(t => {
+        return { ...t, checked: false };
+      }),
+    );
+    formRef.current?.clearField('minPrice');
+    formRef.current?.clearField('maxPrice');
+  }, [tagItems]);
+
   const handleDoFilterPressed = useCallback(
     (data: PriceFormContent) => {
       setOrder(orderBy === 0 ? 'date' : 'distance');
@@ -78,11 +89,11 @@ const Filters: React.FC = () => {
 
     setTagItems(
       tagsCollection.docs.map(item => ({
-        checked: false,
+        checked: !!tags.find(t => t.title === item.id),
         tag: { title: item.id },
       })),
     );
-  }, []);
+  }, [tags]);
 
   useEffect(() => {
     fetchTags();
@@ -168,6 +179,7 @@ const Filters: React.FC = () => {
           returnKeyType="default"
           onSubmitEditing={() => formRef.current?.submitForm()}
         />
+        <Button onPress={handleClearPress}>Limpar</Button>
         <Button onPress={() => formRef.current?.submitForm()}>Filtrar</Button>
       </Form>
     </Container>
