@@ -42,3 +42,11 @@ export const AdMetaText = styled.Text`
   color: ${NORMAL_TEXT_COLOR};
   font-family: 'RobotoSlab-Regular';
 `;
+
+export const Distance = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-top: 8px;
+  flex: 1;
+  justify-content: flex-end;
+`;

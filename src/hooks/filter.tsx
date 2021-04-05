@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import Ad from '../types/Ad';
 import { Tag } from '../types/Tag';
-import { useGeolocation } from './geolocation';
 
 interface Position {
   latitude: number;
@@ -34,16 +33,15 @@ const FilterProvider: React.FC = ({ children }) => {
   const [tags, setTags] = useState<Tag[]>([]);
   const [minPrice, setMinPrice] = useState<number | undefined>();
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
-  const { getDistance } = useGeolocation();
 
   const orderFn = useCallback(
     (ad1: Ad, ad2: Ad) => {
-      if (order === 'distance' && position) {
-        return getDistance(ad1, position) - getDistance(ad2, position);
+      if (order === 'distance') {
+        return (ad1.distance || 0) - (ad2.distance || 0);
       }
       return ad2.date.getTime() - ad1.date.getTime();
     },
-    [getDistance, order, position],
+    [order],
   );
 
   const filterFn = useCallback(
@@ -52,6 +50,9 @@ const FilterProvider: React.FC = ({ children }) => {
 
       if (maxPrice && ad.price > maxPrice) return false;
 
+      if (maxDistance < 100 && ad.distance && ad.distance > maxDistance)
+        return false;
+
       if (tags.length > 0) {
         const tagsNotFound = tags.filter(
           tag => !ad.tags.find(t => t === tag.title),
@@ -59,14 +60,9 @@ const FilterProvider: React.FC = ({ children }) => {
         if (tagsNotFound.length > 0) return false;
       }
 
-      if (maxDistance < 100 && position) {
-        const distance = getDistance(position, ad);
-        if (distance > maxDistance) return false;
-      }
-
       return true;
     },
-    [getDistance, maxDistance, maxPrice, minPrice, position, tags],
+    [maxDistance, maxPrice, minPrice, tags],
   );
 
   return (

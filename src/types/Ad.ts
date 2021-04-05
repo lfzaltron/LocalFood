@@ -12,4 +12,5 @@ export default interface Ad {
   date: Date;
   latitude: number;
   longitude: number;
+  distance: number | undefined;
 }

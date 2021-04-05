@@ -14,6 +14,7 @@ import {
   AdTitle,
   AdMeta,
   AdMetaText,
+  Distance,
 } from './styles';
 
 interface ListAdsProps {
@@ -53,6 +54,12 @@ const ListAds: React.FC<ListAdsProps> = ({ ads, refreshing, onRefresh }) => {
                 R$
                 {` ${ad.price.toFixed(2)}`}
               </AdMetaText>
+              {ad.distance !== undefined && (
+                <Distance>
+                  <Icon name="map-pin" size={14} color={DARK_TEXT_COLOR} />
+                  <AdMetaText>{` ${ad.distance.toFixed(2)} km`}</AdMetaText>
+                </Distance>
+              )}
             </AdMeta>
           </AdInfo>
         </AdContainer>

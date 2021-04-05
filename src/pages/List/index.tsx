@@ -4,6 +4,11 @@ import { useNavigation } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore';
 
 import Ad from '../../types/Ad';
+import ListAds from '../../components/ListAds';
+import { useFilter } from '../../hooks/filter';
+import { useGeolocation } from '../../hooks/geolocation';
+
+import { DARK_TEXT_COLOR } from '../../constants';
 
 import {
   Container,
@@ -12,16 +17,14 @@ import {
   FindField,
   FilterButton,
 } from './styles';
-import { DARK_TEXT_COLOR } from '../../constants';
-import ListAds from '../../components/ListAds';
-import { useFilter } from '../../hooks/filter';
 
 const List: React.FC = () => {
-  const { filterFn, orderFn } = useFilter();
+  const { filterFn, orderFn, position } = useFilter();
   const [loading, setLoading] = useState(false);
   const [ads, setAds] = useState<Ad[]>([]);
   const [search, setSearch] = useState('');
   const { navigate } = useNavigation();
+  const { getDistance } = useGeolocation();
 
   const loadAds = useCallback(async () => {
     setLoading(true);
@@ -37,6 +40,13 @@ const List: React.FC = () => {
       const doc = adsCollection.docs[i];
       const title = doc.data().title.toUpperCase();
 
+      let distance;
+      const { latitude, longitude } = doc.data();
+      if (position && latitude && longitude) {
+        distance = getDistance({ latitude, longitude }, position);
+        console.log({ distance });
+      }
+
       const currentAd = {
         id: doc.id,
         title: doc.data().title,
@@ -49,8 +59,9 @@ const List: React.FC = () => {
           name: '',
         },
         date: doc.data().date.toDate(),
-        latitude: doc.data().latitude,
-        longitude: doc.data().longitude,
+        latitude,
+        longitude,
+        distance,
       };
 
       if (title.includes(searchUpper)) {
@@ -67,7 +78,7 @@ const List: React.FC = () => {
 
     setAds(stubAds.filter(filterFn).sort(orderFn));
     setLoading(false);
-  }, [search, filterFn, orderFn]);
+  }, [search, filterFn, orderFn, position, getDistance]);
 
   useEffect(() => {
     loadAds();
