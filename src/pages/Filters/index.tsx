@@ -4,8 +4,9 @@ import firestore from '@react-native-firebase/firestore';
 import { Slider } from 'react-native-elements';
 import { FormHandles } from '@unform/core';
 import { Form } from '@unform/mobile';
-
 import { useNavigation } from '@react-navigation/native';
+import { ScrollView } from 'react-native';
+
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 import ListTags from '../../components/ListTags';
@@ -119,70 +120,72 @@ const Filters: React.FC = () => {
   ];
 
   return (
-    <Container>
-      <Section>Ordenar por</Section>
-      <SwitchSelector
-        options={options}
-        initial={orderBy}
-        onPress={v => setOrderBy(v as number)}
-        textColor={DARK_TEXT_COLOR} // '#7a44cf'
-        selectedColor={DARK_TEXT_COLOR}
-        buttonColor={LIGHT_HIGHLIGHT_COLOR}
-        borderColor={LIGHT_HIGHLIGHT_COLOR}
-      />
-      <Section>Filtros</Section>
-      <Label>
-        {distance && distance < 100
-          ? `Distância: até ${distance} kilômetros`
-          : 'Distância: qualquer'}
-      </Label>
-      <Slider
-        value={distance}
-        maximumValue={100}
-        minimumValue={1}
-        step={1}
-        onValueChange={setDistance}
-        minimumTrackTintColor={HIGHLIGHT_COLOR}
-        maximumTrackTintColor={NORMAL_TEXT_COLOR}
-        thumbTintColor={HIGHLIGHT_COLOR}
-        thumbStyle={{ height: 30, width: 30 }}
-      />
+    <ScrollView keyboardShouldPersistTaps="handled">
+      <Container>
+        <Section>Ordenar por</Section>
+        <SwitchSelector
+          options={options}
+          initial={orderBy}
+          onPress={v => setOrderBy(v as number)}
+          textColor={DARK_TEXT_COLOR} // '#7a44cf'
+          selectedColor={DARK_TEXT_COLOR}
+          buttonColor={LIGHT_HIGHLIGHT_COLOR}
+          borderColor={LIGHT_HIGHLIGHT_COLOR}
+        />
+        <Section>Filtros</Section>
+        <Label>
+          {distance && distance < 100
+            ? `Distância: até ${distance} kilômetros`
+            : 'Distância: qualquer'}
+        </Label>
+        <Slider
+          value={distance}
+          maximumValue={100}
+          minimumValue={1}
+          step={1}
+          onValueChange={setDistance}
+          minimumTrackTintColor={HIGHLIGHT_COLOR}
+          maximumTrackTintColor={NORMAL_TEXT_COLOR}
+          thumbTintColor={HIGHLIGHT_COLOR}
+          thumbStyle={{ height: 30, width: 30 }}
+        />
 
-      <Label>Tags</Label>
-      <ListTags tags={tagItems} onSelect={selectTag} />
-      <Label>Preço (R$)</Label>
-      <Form
-        ref={formRef}
-        onSubmit={handleDoFilterPressed}
-        initialData={{
-          minPrice: minPrice ? `${minPrice}` : '',
-          maxPrice: maxPrice ? `${maxPrice}` : '',
-        }}
-      >
-        <Input
-          name="minPrice"
-          icon=""
-          placeholder="Mínimo"
-          autoCorrect={false}
-          autoCapitalize="none"
-          keyboardType="decimal-pad"
-          returnKeyType="default"
-          onSubmitEditing={() => formRef.current?.submitForm()}
-        />
-        <Input
-          name="maxPrice"
-          icon=""
-          placeholder="Máximo"
-          autoCorrect={false}
-          autoCapitalize="none"
-          keyboardType="decimal-pad"
-          returnKeyType="default"
-          onSubmitEditing={() => formRef.current?.submitForm()}
-        />
-        <Button onPress={handleClearPress}>Limpar</Button>
-        <Button onPress={() => formRef.current?.submitForm()}>Filtrar</Button>
-      </Form>
-    </Container>
+        <Label>Tags</Label>
+        <ListTags tags={tagItems} onSelect={selectTag} />
+        <Label>Preço (R$)</Label>
+        <Form
+          ref={formRef}
+          onSubmit={handleDoFilterPressed}
+          initialData={{
+            minPrice: minPrice ? `${minPrice}` : '',
+            maxPrice: maxPrice ? `${maxPrice}` : '',
+          }}
+        >
+          <Input
+            name="minPrice"
+            icon=""
+            placeholder="Mínimo"
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="decimal-pad"
+            returnKeyType="default"
+            onSubmitEditing={() => formRef.current?.submitForm()}
+          />
+          <Input
+            name="maxPrice"
+            icon=""
+            placeholder="Máximo"
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="decimal-pad"
+            returnKeyType="default"
+            onSubmitEditing={() => formRef.current?.submitForm()}
+          />
+          <Button onPress={handleClearPress}>Limpar</Button>
+          <Button onPress={() => formRef.current?.submitForm()}>Filtrar</Button>
+        </Form>
+      </Container>
+    </ScrollView>
   );
 };
 
