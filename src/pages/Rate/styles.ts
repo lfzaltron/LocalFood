@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 import { Form as Unform } from '@unform/mobile';
-import { DARK_TEXT_COLOR, LIGHT_HIGHLIGHT_COLOR } from '../../constants';
+import { DARK_TEXT_COLOR } from '../../constants';
 
 export const Container = styled.View`
   flex: 1;

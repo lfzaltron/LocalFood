@@ -49,7 +49,7 @@ const Rate: React.FC = () => {
           setObs(snapshot.data()?.obs);
         }
       });
-  }, []);
+  }, [id, user.id]);
 
   const updateUserStarsMed = useCallback(() => {
     firestore()
