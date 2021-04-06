@@ -43,7 +43,7 @@ export const AdMetaText = styled.Text`
   font-family: 'RobotoSlab-Regular';
 `;
 
-export const Distance = styled.View`
+export const RightInfo = styled.View`
   flex-direction: row;
   align-items: center;
   margin-top: 8px;

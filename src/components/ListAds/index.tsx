@@ -14,7 +14,7 @@ import {
   AdTitle,
   AdMeta,
   AdMetaText,
-  Distance,
+  RightInfo,
 } from './styles';
 
 interface ListAdsProps {
@@ -44,10 +44,22 @@ const ListAds: React.FC<ListAdsProps> = ({ ads, refreshing, onRefresh }) => {
         <AdContainer onPress={() => navigateToDetail(ad)}>
           <AdImage source={{ uri: ad.imageUrl }} />
           <AdInfo>
-            <AdTitle>{ad.title}</AdTitle>
             <AdMeta>
-              <Icon name="tag" size={14} color={DARK_TEXT_COLOR} />
-              <AdMetaText>{ad.tags.join(' / ')}</AdMetaText>
+              <AdTitle>{ad.title}</AdTitle>
+              {ad.rating > 0 && (
+                <RightInfo>
+                  <Icon name="star" size={14} color={DARK_TEXT_COLOR} />
+                  <AdMetaText>{`${ad.rating.toFixed(1)}`}</AdMetaText>
+                </RightInfo>
+              )}
+            </AdMeta>
+            <AdMeta>
+              {ad.tags.length > 0 && (
+                <>
+                  <Icon name="tag" size={14} color={DARK_TEXT_COLOR} />
+                  <AdMetaText>{ad.tags.join(' / ')}</AdMetaText>
+                </>
+              )}
             </AdMeta>
             <AdMeta>
               <AdMetaText>
@@ -55,10 +67,10 @@ const ListAds: React.FC<ListAdsProps> = ({ ads, refreshing, onRefresh }) => {
                 {` ${ad.price.toFixed(2)}`}
               </AdMetaText>
               {ad.distance !== undefined && (
-                <Distance>
+                <RightInfo>
                   <Icon name="map-pin" size={14} color={DARK_TEXT_COLOR} />
-                  <AdMetaText>{` ${ad.distance.toFixed(2)} km`}</AdMetaText>
-                </Distance>
+                  <AdMetaText>{`${ad.distance.toFixed(2)} km`}</AdMetaText>
+                </RightInfo>
               )}
             </AdMeta>
           </AdInfo>

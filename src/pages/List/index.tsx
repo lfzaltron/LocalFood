@@ -29,13 +29,12 @@ const List: React.FC = () => {
   const loadAds = useCallback(async () => {
     setLoading(true);
 
-    const adsCollection = await firestore()
-      .collection('Ads')
-      // .where('title', 'in', ['Pizza congelada'])
-      .get();
+    const adsCollection = await firestore().collection('Ads').get();
 
     const stubAds: Ad[] = [];
     const searchUpper = search.toUpperCase();
+
+    const promises: Promise<any>[] = [];
     for (let i = 0; i < adsCollection.docs.length; i += 1) {
       const doc = adsCollection.docs[i];
       const title = doc.data().title.toUpperCase();
@@ -44,7 +43,6 @@ const List: React.FC = () => {
       const { latitude, longitude } = doc.data();
       if (position && latitude && longitude) {
         distance = getDistance({ latitude, longitude }, position);
-        console.log({ distance });
       }
 
       const currentAd = {
@@ -62,19 +60,25 @@ const List: React.FC = () => {
         latitude,
         longitude,
         distance,
+        rating: -1,
       };
 
       if (title.includes(searchUpper)) {
-        firestore()
-          .collection('Users')
-          .doc(currentAd.user.id)
-          .get()
-          .then(userData => {
-            currentAd.user.name = userData.data()?.name;
-          });
-        stubAds.push(currentAd);
+        promises.push(
+          firestore()
+            .collection('Users')
+            .doc(currentAd.user.id)
+            .get()
+            .then(userData => {
+              currentAd.user.name = userData.data()?.name;
+              currentAd.rating = userData.data()?.stars;
+              stubAds.push(currentAd);
+            }),
+        );
       }
     }
+
+    await Promise.all(promises);
 
     setAds(stubAds.filter(filterFn).sort(orderFn));
     setLoading(false);

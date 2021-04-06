@@ -13,4 +13,5 @@ export default interface Ad {
   latitude: number;
   longitude: number;
   distance: number | undefined;
+  rating: number;
 }
