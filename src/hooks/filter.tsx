@@ -8,18 +8,20 @@ interface Position {
 }
 
 interface FilterContextData {
-  order: 'date' | 'distance';
+  order: 'date' | 'distance' | 'rating';
   position: Position | undefined;
   maxDistance: number;
   tags: Tag[];
   minPrice: number | undefined;
   maxPrice: number | undefined;
-  setOrder(order: 'date' | 'distance'): void;
+  minRating: number;
+  setOrder(order: 'date' | 'distance' | 'rating'): void;
   setPosition(position: Position): void;
   setMaxDistance(maxDistance: number): void;
   setTags(tags: Tag[]): void;
   setMinPrice(minPrice: number | undefined): void;
   setMaxPrice(maxPrice: number | undefined): void;
+  setMinRating(minRating: number): void;
   orderFn(ad1: Ad, ad2: Ad): number;
   filterFn(ad: Ad): boolean;
 }
@@ -27,25 +29,28 @@ interface FilterContextData {
 const FilterContext = createContext({} as FilterContextData);
 
 const FilterProvider: React.FC = ({ children }) => {
-  const [order, setOrder] = useState<'date' | 'distance'>('date');
+  const [order, setOrder] = useState<'date' | 'distance' | 'rating'>('date');
   const [position, setPosition] = useState<Position>();
   const [maxDistance, setMaxDistance] = useState<number>(100);
+  const [minRating, setMinRating] = useState<number>(0);
   const [tags, setTags] = useState<Tag[]>([]);
   const [minPrice, setMinPrice] = useState<number | undefined>();
   const [maxPrice, setMaxPrice] = useState<number | undefined>();
 
   const orderFn = useCallback(
     (ad1: Ad, ad2: Ad) => {
-      if (order === 'distance') {
+      if (order === 'distance')
         return (ad1.distance || 0) - (ad2.distance || 0);
-      }
-      return ad2.date.getTime() - ad1.date.getTime();
+      if (order === 'date') return ad2.date.getTime() - ad1.date.getTime();
+      return ad2.rating - ad1.rating;
     },
     [order],
   );
 
   const filterFn = useCallback(
     (ad: Ad) => {
+      if (ad.rating < minRating) return false;
+
       if (minPrice && ad.price < minPrice) return false;
 
       if (maxPrice && ad.price > maxPrice) return false;
@@ -74,12 +79,14 @@ const FilterProvider: React.FC = ({ children }) => {
         tags,
         minPrice,
         maxPrice,
+        minRating,
         setOrder,
         setPosition,
         setMaxDistance,
         setTags,
         setMinPrice,
         setMaxPrice,
+        setMinRating,
         orderFn,
         filterFn,
       }}

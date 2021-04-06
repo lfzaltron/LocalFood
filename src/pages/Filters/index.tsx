@@ -41,9 +41,15 @@ const Filters: React.FC = () => {
     setMinPrice,
     maxPrice,
     setMaxPrice,
+    minRating,
+    setMinRating,
   } = useFilter();
-  const [orderBy, setOrderBy] = useState(order === 'date' ? 0 : 1);
+  const [orderBy, setOrderBy] = useState(
+    // eslint-disable-next-line no-nested-ternary
+    order === 'date' ? 0 : order === 'distance' ? 1 : 2,
+  );
   const [distance, setDistance] = useState(maxDistance);
+  const [rating, setRating] = useState(minRating);
   const [tagItems, setTagItems] = useState<TagItem[]>([]);
   const formRef = useRef<FormHandles>(null);
   const { currentPosition, updateCurrentPosition } = useGeolocation();
@@ -56,15 +62,29 @@ const Filters: React.FC = () => {
         return { ...t, checked: false };
       }),
     );
+    setRating(0);
     formRef.current?.clearField('minPrice');
     formRef.current?.clearField('maxPrice');
   }, [tagItems]);
 
   const handleDoFilterPressed = useCallback(
     (data: PriceFormContent) => {
-      setOrder(orderBy === 0 ? 'date' : 'distance');
+      switch (orderBy) {
+        case 0:
+          setOrder('date');
+          break;
+        case 1:
+          setOrder('distance');
+          break;
+        case 2:
+          setOrder('rating');
+          break;
+        default:
+          break;
+      }
       setPosition(currentPosition);
       setMaxDistance(distance);
+      setMinRating(rating);
       setTags(tagItems.filter(item => item.checked).map(item => item.tag));
       setMinPrice(data.minPrice);
       setMaxPrice(data.maxPrice);
@@ -75,9 +95,11 @@ const Filters: React.FC = () => {
       distance,
       goBack,
       orderBy,
+      rating,
       setMaxDistance,
       setMaxPrice,
       setMinPrice,
+      setMinRating,
       setOrder,
       setPosition,
       setTags,
@@ -117,6 +139,7 @@ const Filters: React.FC = () => {
   const options = [
     { label: 'Data', value: 0 },
     { label: 'Distância', value: 1 },
+    { label: 'Avaliação', value: 2 },
   ];
 
   return (
@@ -149,7 +172,18 @@ const Filters: React.FC = () => {
           thumbTintColor={HIGHLIGHT_COLOR}
           thumbStyle={{ height: 30, width: 30 }}
         />
-
+        <Label>{`Avaliação mínima: ${rating.toFixed(1)}`}</Label>
+        <Slider
+          value={rating}
+          maximumValue={5}
+          minimumValue={0}
+          step={0.1}
+          onValueChange={setRating}
+          minimumTrackTintColor={HIGHLIGHT_COLOR}
+          maximumTrackTintColor={NORMAL_TEXT_COLOR}
+          thumbTintColor={HIGHLIGHT_COLOR}
+          thumbStyle={{ height: 30, width: 30 }}
+        />
         <Label>Tags</Label>
         <ListTags tags={tagItems} onSelect={selectTag} />
         <Label>Preço (R$)</Label>
