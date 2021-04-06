@@ -3,7 +3,7 @@ import { DARK_TEXT_COLOR, NORMAL_TEXT_COLOR } from '../../constants';
 
 export const Container = styled.View`
   flex: 1;
-  margin: 0 20px;
+  margin: 0 20px 20px;
 `;
 
 export const Section = styled.Text`
