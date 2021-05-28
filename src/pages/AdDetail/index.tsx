@@ -56,7 +56,7 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
         },
       ]);
     }
-  }, [ad.id, ad.user.id, goBack, user.id]);
+  }, [ad.id, ad.user.id, goBack, user]);
 
   useEffect(
     () =>
@@ -64,7 +64,7 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
         headerTitle: () => <Header>{ad.title}</Header>,
         headerBackTitleVisible: false,
         headerRight: () => {
-          if (user.id === ad.user.id)
+          if (user && user.id === ad.user.id)
             return (
               <DeleteButton onPress={handleDelete}>
                 <Icon name="trash-2" size={24} color={DARK_TEXT_COLOR} />
@@ -73,7 +73,7 @@ const AdDetail: React.FC<AdDetailProps> = ({ navigation }) => {
           return <></>;
         },
       }),
-    [navigation, ad, user.id, handleDelete],
+    [navigation, ad, handleDelete, user],
   );
 
   const handleSellerButtonPress = useCallback(() => {
