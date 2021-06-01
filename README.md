@@ -32,7 +32,7 @@ O Objetido da a plicação é conectar clientes a pessoas da sua região que est
 
 ### Avaliação do usuário (comprador ou vendedor) / Novo anúncio / Perfil
 <p align="center">
-  <img src="https://github.com/lfzaltron/LocalFood/blob/master/readme_images/rate.png" width="310" title="Avaliação do usuário" alt="Avaliação do usuário">
-  <img src="https://github.com/lfzaltron/LocalFood/blob/master/readme_images/new.png" width="310" title="Novo anúncio" alt="Novo anúncio">
-  <img src="https://github.com/lfzaltron/LocalFood/blob/master/readme_images/profile.png" width="310" title="Perfil" alt="Perfil">
+  <img src="https://github.com/lfzaltron/LocalFood/blob/master/readme_images/rate.png" width="300" title="Avaliação do usuário" alt="Avaliação do usuário">
+  <img src="https://github.com/lfzaltron/LocalFood/blob/master/readme_images/new.png" width="300" title="Novo anúncio" alt="Novo anúncio">
+  <img src="https://github.com/lfzaltron/LocalFood/blob/master/readme_images/profile.png" width="300" title="Perfil" alt="Perfil">
 </p>
